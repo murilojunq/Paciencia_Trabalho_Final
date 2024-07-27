@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <raylib.h>
 
-#include "baralho.h"
+
 
 #define QUANTIDADE_DE_CARTAS 52
 #define TAMANHO_DO_VETOR 51
@@ -128,21 +129,22 @@ ListaCircEnc* cria_baralho(){
     ListaCircEnc *baralho;
     baralho = criaListaCircEnc();
     for (int i=0; i<52; i++) {
-        fscanf(txtcartas, " %d %s %d %s", &carta.valor, carta.naipe, &carta.chave, carta.imagem);
+        fscanf(txtcartas, " %d %s %d %s", &carta.valor, carta.naipe, &carta.chave, carta.imagemtxt);
         insereInicioListaCircEnc(baralho, carta);
     }
-    fclose(txtcartas);
 
     return baralho;
 
 }
 
-ListaCircEnc* embaralha_baralho()
+ListaCircEnc* embaralha_baralho(ListaCircEnc* baralho)
 {
 
     int cartas[TAMANHO_DO_VETOR];
     int cartas_embaralhadas[TAMANHO_DO_VETOR];
     int i, j, aux, menor_valor = 1;
+    ListaCircEnc *baralho_embaralhado = criaListaCircEnc();
+    NodoLEnc *nodoAux;
 
     srand(time(NULL));
 
@@ -161,15 +163,12 @@ ListaCircEnc* embaralha_baralho()
     }
 
     //passando os valores embaralhados para o novo vetor
-    for(i = 0; i <= TAMANHO_DO_VETOR; i++)
-    {
-        cartas_embaralhadas[i] = cartas[i];
+    for (int k=0;k<TAMANHO_DO_VETOR; k++) {
+        nodoAux = buscaInfoListaCircEnc(baralho, cartas[k]);
+        insereInicioListaCircEnc(baralho_embaralhado, nodoAux->info);
     }
 
-
-    for(i = 0; i <= TAMANHO_DO_VETOR; i++){
-
-    }
+    return baralho_embaralhado;
 }
 
 

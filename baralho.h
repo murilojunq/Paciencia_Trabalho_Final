@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <raylib.h>
 
 #define NOME_NAIPE 10
 
@@ -11,7 +12,8 @@ typedef struct{
     int chave;
     int valor;
     char naipe[NOME_NAIPE];
-    char imagem[22];
+    char imagemtxt[35];
+    Texture2D imagem;
     int sentido; //de costas (0) ou de frente (1);
 }Carta;
 
@@ -45,9 +47,9 @@ int insereFimListaCircEnc(ListaCircEnc *lista, Info info);
 // Funcao que resgata um nodo com uma informacao de uma lista
 NodoLEnc* buscaInfoListaCircEnc(ListaCircEnc* lista, int chave);
 
-ListaCircEnc cria_baralho();
+ListaCircEnc* cria_baralho();
 
-ListaCircEnc embaralha_baralho();
+ListaCircEnc* embaralha_baralho(ListaCircEnc* baralho);
 
 
 
