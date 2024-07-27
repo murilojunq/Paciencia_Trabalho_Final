@@ -19,20 +19,7 @@ void iniciaMenu() {
 }
 
 void novoJogo() {
-    FILE *txtcartas;
-    txtcartas = fopen("cartas.txt", "r");
-
-    Carta carta;
-    ListaCircEnc *baralho;
-    baralho = criaListaCircEnc();
-    for (int i=0; i<52; i++) {
-        fscanf(txtcartas, " %d %s %d %s", &carta.valor, carta.naipe, &carta.chave, carta.imagem);
-        insereInicioListaCircEnc(baralho, carta);
-    }
-    imprimeListaCircEnc(baralho);
-
-
-    fclose(txtcartas);
+    cria_baralho();
 }
 
 void carregarJogo() {

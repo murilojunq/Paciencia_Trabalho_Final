@@ -121,36 +121,17 @@ NodoLEnc* buscaInfoListaCircEnc(ListaCircEnc* lista, int chave)
 }
 
 ListaCircEnc* cria_baralho(){
-    ListaCircEnc *baralho = criaListaCircEnc();
-    NodoLEnc *carta;
-    int i, valor_da_carta = 1, quant_cartas_mesmo_valor = 1;
+    FILE *txtcartas;
+    txtcartas = fopen("cartas.txt", "r");
 
-    baralho->prim = carta;
-
-    for(i = 0; i < QUANTIDADE_DE_CARTAS; i++){ //preenchendo as infos das cartas
-        carta->info.chave = i+1;
-        carta->info.valor = valor_da_carta;
-        carta->info.sentido = 0;
-
-        if(quant_cartas_mesmo_valor == 1){
-            strcpy(carta->info.naipe, "paus");
-        }
-        else if(quant_cartas_mesmo_valor == 2){
-            strcpy(carta->info.naipe, "ouros");
-        }
-        else if(quant_cartas_mesmo_valor == 3){
-            strcpy(carta->info.naipe, "copas");
-        }
-        else if(quant_cartas_mesmo_valor == 4){
-            strcpy(carta->info.naipe, "espadas");
-            valor_da_carta++;
-            quant_cartas_mesmo_valor = 1;  //reinicia a contagem apos 4 naipes;
-        }
-        quant_cartas_mesmo_valor++;
-        insereFimListaCircEnc(baralho, carta->info);
-        free(carta);
-
+    Carta carta;
+    ListaCircEnc *baralho;
+    baralho = criaListaCircEnc();
+    for (int i=0; i<52; i++) {
+        fscanf(txtcartas, " %d %s %d %s", &carta.valor, carta.naipe, &carta.chave, carta.imagem);
+        insereInicioListaCircEnc(baralho, carta);
     }
+    fclose(txtcartas);
 
     return baralho;
 

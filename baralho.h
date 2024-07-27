@@ -40,10 +40,14 @@ void imprimeListaCircEnc(ListaCircEnc *lista);
 int insereInicioListaCircEnc(ListaCircEnc *lista, Info info);
 
 // Fun��o que insere um nodo no fim de uma lista
-void insereFimListaCircEnc(ListaCircEnc *lista, Info info);
+int insereFimListaCircEnc(ListaCircEnc *lista, Info info);
 
 // Funcao que resgata um nodo com uma informacao de uma lista
 NodoLEnc* buscaInfoListaCircEnc(ListaCircEnc* lista, int chave);
+
+ListaCircEnc cria_baralho();
+
+ListaCircEnc embaralha_baralho();
 
 
 
