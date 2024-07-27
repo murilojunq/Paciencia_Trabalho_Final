@@ -9,7 +9,7 @@
 #define QUANTIDADE_DE_CARTAS 52
 #define TAMANHO_DO_VETOR 51
 
-// Função que cria uma lista
+// Funï¿½ï¿½o que cria uma lista
 ListaCircEnc* criaListaCircEnc()
 {
     ListaCircEnc *lista = (ListaCircEnc*)malloc(sizeof(ListaCircEnc));
@@ -20,7 +20,7 @@ ListaCircEnc* criaListaCircEnc()
     return lista;
 }
 
-// Função que destrói uma lista
+// Funï¿½ï¿½o que destrï¿½i uma lista
 void destroiListaCircEnc(ListaCircEnc *lista)
 {
     if (lista->prim != NULL)
@@ -37,7 +37,7 @@ void destroiListaCircEnc(ListaCircEnc *lista)
     free(lista);
 }
 
-// Função que imprime todos os nós de uma lista
+// Funï¿½ï¿½o que imprime todos os nï¿½s de uma lista
 void imprimeListaCircEnc(ListaCircEnc *lista)
 {
     if (lista->prim != NULL)
@@ -56,7 +56,7 @@ void imprimeListaCircEnc(ListaCircEnc *lista)
     }
 }
 
-// Função que insere um nó no início de uma lista
+// Funï¿½ï¿½o que insere um nï¿½ no inï¿½cio de uma lista
 int insereInicioListaCircEnc(ListaCircEnc *lista, Info info)
 {
     NodoLEnc *novo = (NodoLEnc*)malloc(sizeof(NodoLEnc));
@@ -81,7 +81,7 @@ int insereInicioListaCircEnc(ListaCircEnc *lista, Info info)
     return 1;
 }
 
-void insereFimListaCircEnc(ListaCircEnc *lista, Info info) {
+int insereFimListaCircEnc(ListaCircEnc *lista, Info info) {
     NodoLEnc *novoNodo = (NodoLEnc*)malloc(sizeof(NodoLEnc));
     if (!novoNodo) {
         return 0;
@@ -104,7 +104,7 @@ void insereFimListaCircEnc(ListaCircEnc *lista, Info info) {
     return 1;
 }
 
-// Função que resgata um nó com uma informação de uma lista
+// Funï¿½ï¿½o que resgata um nï¿½ com uma informaï¿½ï¿½o de uma lista
 NodoLEnc* buscaInfoListaCircEnc(ListaCircEnc* lista, int chave)
 {
     if (lista->prim != NULL)

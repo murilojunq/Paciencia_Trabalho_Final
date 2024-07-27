@@ -11,8 +11,8 @@ typedef struct{
     int chave;
     int valor;
     char naipe[NOME_NAIPE];
+    char imagem[22];
     int sentido; //de costas (0) ou de frente (1);
-    Texture2D
 }Carta;
 
 typedef Carta Info;
@@ -39,7 +39,7 @@ void imprimeListaCircEnc(ListaCircEnc *lista);
 // Funcao que insere um nodo no inicio de uma lista
 int insereInicioListaCircEnc(ListaCircEnc *lista, Info info);
 
-// Função que insere um nodo no fim de uma lista
+// Funï¿½ï¿½o que insere um nodo no fim de uma lista
 void insereFimListaCircEnc(ListaCircEnc *lista, Info info);
 
 // Funcao que resgata um nodo com uma informacao de uma lista
