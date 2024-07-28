@@ -291,6 +291,10 @@ int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info) {
     NodoPEnc *novo = (NodoPEnc*)malloc(sizeof(NodoPEnc));
    if (novo != NULL){ // Idealmente, sempre checar!
       novo->info = info;
+      if (pilha->topo) {
+        pilha->topo->ant = novo;
+      }
+      novo->ant = NULL;
       novo->prox = pilha->topo;
       pilha->topo = novo;
    }
@@ -298,4 +302,51 @@ int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info) {
     novo->info.sentido = 0;
 }
 
+int desenhaCartasColuna(FilaEnc *fila, PilhaEnc *pilha, int coluna, int sentido, float multi_res, int numBaixo) {
+    /* Essa funcao desenha as cartas das colunas superiores
+    Quando for usada para desenhar as cartas de cabeça para baixo (pilhas), o argumento fila deve receber NULL, e vice-versa;
+    O argumento coluna é referente à qual coluna estas cartas pertencem;
+    O argumento sentido é referente ao sentido da carta (virado para cima ou para baixo);
+    O argumento numBaixo, é o número de cartas daquela coluna que estão de cabeça para baixo (é importante apenas quando
+esta funcao for usada para plotar as cartas viradas para cima, caso contrario deve receber 0)
+    */
+    
+    NodoLEnc *carta;
+    int i = 0;
+    if (sentido == 0) {
+        i = 0;
+        carta = pilha->topo;
+        while(carta->prox != NULL) {
+            carta = carta->prox;
+        }
+        while(carta != NULL) {
+            Image cartaImagem = LoadImage("cartas/card_back_red.png");
+            ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
+            carta->info.imagem = LoadTextureFromImage(cartaImagem);
+            UnloadImage(cartaImagem);
+
+            DrawTexture(carta->info.imagem,(100 + (coluna-1)*65)*multi_res, (10+ i*20*multi_res), WHITE);
+
+            carta = carta->ant;
+            i++;
+        }
+        return i;
+    }
+    else if (sentido == 1) {
+        carta = fila->ini;
+        while(carta != NULL) {
+            Image cartaImagem = LoadImage(carta->info.imagemtxt);
+            ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
+            carta->info.imagem = LoadTextureFromImage(cartaImagem);
+            UnloadImage(cartaImagem);
+
+            DrawTexture(carta->info.imagem,(100 + (coluna-1)*65)*multi_res, (10+ (numBaixo+i)*20*multi_res), WHITE);
+
+            carta = carta->prox;
+            i++;
+        }
+        return 0;
+    }
+    return -1;
+}
 

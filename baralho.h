@@ -98,4 +98,6 @@ int insereFilaViradoCima(FilaEnc *fila, Info info);
 
 int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info);
 
+int desenhaCartasColuna(FilaEnc *fila, PilhaEnc *pilha, int coluna, int sentido, float multi_res, int numBaixo);
+
 #endif // BARALHO_H_INCLUDED
