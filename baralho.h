@@ -29,6 +29,49 @@ typedef struct{
     struct nodoLEnc *prim;
 }ListaCircEnc;
 
+typedef NodoLEnc NodoPEnc;
+
+typedef struct pilhaEnc{
+   NodoPEnc *topo;
+} PilhaEnc;
+
+typedef NodoLEnc NodoFEnc;
+
+typedef struct filaEnc{
+   NodoFEnc *ini;
+   NodoFEnc *fim;
+} FilaEnc;
+
+// Funcao que cria uma fila
+FilaEnc* criaFilaEnc();
+
+// Funcao que destroi uma fila
+void destroiFilaEnc(FilaEnc *fila);
+
+// Funcao que insere um elemento na fila
+void enfileiraFilaEnc(FilaEnc *fila, Info info);
+
+// Funcao que remove um elemento da fila
+Info desenfileiraFilaEnc(FilaEnc *fila);
+
+// Funcao que determina se uma fila eh vazia
+int vaziaFilaEnc(FilaEnc* fila);
+
+// Funcao que cria uma pilha
+PilhaEnc* criaPilhaEnc();
+
+// Funcao que destroi uma pilha
+void destroiPilhaEnc(PilhaEnc *pilha);
+
+// Funcao que insere um elemento na pilha
+void empilhaPilhaEnc(PilhaEnc *pilha, Info info);
+
+// Funcao que remove um elemento da pilha
+Info desempilhaPilhaEnc(PilhaEnc *pilha);
+
+// Funcao que determina se uma pilha eh vazia
+int vaziaPilhaEnc(PilhaEnc* pilha);
+
 // Funcao que cria uma lista
 ListaCircEnc* criaListaCircEnc();
 
@@ -50,6 +93,8 @@ NodoLEnc* buscaInfoListaCircEnc(ListaCircEnc* lista, int chave);
 ListaCircEnc* cria_baralho();
 
 ListaCircEnc* embaralha_baralho(ListaCircEnc* baralho);
+
+
 
 
 

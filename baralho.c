@@ -10,6 +10,106 @@
 #define QUANTIDADE_DE_CARTAS 52
 #define TAMANHO_DO_VETOR 51
 
+
+// Funcao que cria uma fila
+FilaEnc* criaFilaEnc(){
+   FilaEnc *fila = (FilaEnc*)malloc(sizeof(FilaEnc));
+   if (fila != NULL){ // Idealmente, sempre checar!
+      fila->ini = NULL;
+      fila->fim = NULL;
+   }
+   return fila;
+}
+
+// Funcao que destroi uma fila
+void destroiFilaEnc(FilaEnc *fila){
+   NodoFEnc *aux = fila->ini;
+   while(aux != NULL){
+       NodoFEnc *tmp = aux->prox;
+       free(aux); // Cuidar ordem do free
+       aux = tmp;
+   }
+   free(fila);
+}
+
+// Funcao que insere um elemento na fila
+void enfileiraFilaEnc(FilaEnc *fila, Info info){
+   NodoFEnc *novo = (NodoFEnc*)malloc(sizeof(NodoFEnc));
+   if (fila != NULL){
+      novo->info = info;
+      novo->prox = NULL;
+      if (fila->fim != NULL)
+         fila->fim->prox = novo;
+      else
+         fila->ini = novo;
+      fila->fim = novo;
+   }
+}
+
+
+// Funcao que remove um elemento da fila
+Info desenfileiraFilaEnc(FilaEnc *fila){
+   NodoFEnc *aux = fila->ini; 
+   Info info = aux->info;
+   fila->ini = aux->prox;
+   if (fila->ini == NULL)
+      fila->fim = NULL;
+   free(aux);
+   return info;
+}
+
+// Funcao que determina se uma fila eh vazia
+int vaziaFilaEnc(FilaEnc *fila){
+   return (fila->ini == NULL);
+}
+
+// Funcao que cria uma pilha
+PilhaEnc* criaPilhaEnc(){
+   PilhaEnc *pilha = (PilhaEnc*)malloc(sizeof(PilhaEnc));
+   if (pilha != NULL) // Idealmente, sempre checar!
+      pilha->topo = NULL;
+   return pilha;
+}
+
+// Funcao que destroi uma pilha
+void destroiPilhaEnc(PilhaEnc *pilha){
+   NodoPEnc *aux = pilha->topo;
+   while(aux != NULL){
+       NodoPEnc *tmp = aux->prox;
+       free(aux); // Cuidar ordem do free
+       aux = tmp;
+   }
+   free(pilha);
+}
+
+// Funcao que insere um elemento na pilha
+void empilhaPilhaEnc(PilhaEnc *pilha, Info info){
+   NodoPEnc *novo = (NodoPEnc*)malloc(sizeof(NodoPEnc));
+   if (novo != NULL){ // Idealmente, sempre checar!
+      novo->info = info;
+      novo->prox = pilha->topo;
+      pilha->topo = novo;
+   }
+}
+
+
+
+// Funcao que remove um elemento da pilha
+Info desempilhaPilhaEnc(PilhaEnc* pilha){
+   NodoPEnc *aux = pilha->topo; 
+   /* Aqui assumimos que desempilha eh 
+   chamada apenas se a pilha nao eh vazia */
+   Info info = aux->info;
+   pilha->topo = aux->prox;
+   free(aux);
+   return info;
+}
+
+// Funcao que determina se uma pilha eh vazia
+int vaziaPilhaEnc(PilhaEnc *pilha){
+   return (pilha->topo == NULL);
+}
+
 // Fun��o que cria uma lista
 ListaCircEnc* criaListaCircEnc()
 {
