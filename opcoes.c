@@ -134,8 +134,33 @@ void novoJogo() {
 
         ClearBackground(GREEN);
 
-        carta = baralho_embaralhado->prim;
-        for (int i=0; i<52; i++) {
+        //desenhando cartas na tela
+
+        int numBaixo = 0; // numero de cartas virada para baixo em cada coluna
+        numBaixo = desenhaCartasColuna(coluna1_cima, NULL, 1, 1, multi_res, numBaixo);
+
+        numBaixo = desenhaCartasColuna(NULL, coluna2_baixo, 2, 0, multi_res, numBaixo);
+        numBaixo = desenhaCartasColuna(coluna2_cima, NULL, 2, 1, multi_res, numBaixo);
+
+        numBaixo = desenhaCartasColuna(NULL, coluna3_baixo, 3, 0, multi_res, numBaixo);
+        numBaixo = desenhaCartasColuna(coluna3_cima, NULL, 3, 1, multi_res, numBaixo);
+
+        numBaixo = desenhaCartasColuna(NULL, coluna4_baixo, 4, 0, multi_res, numBaixo);
+        numBaixo = desenhaCartasColuna(coluna4_cima, NULL, 4, 1, multi_res, numBaixo);
+
+        numBaixo = desenhaCartasColuna(NULL, coluna5_baixo, 5, 0, multi_res, numBaixo);
+        numBaixo = desenhaCartasColuna(coluna5_cima, NULL, 5, 1, multi_res, numBaixo);
+
+        numBaixo = desenhaCartasColuna(NULL, coluna6_baixo, 6, 0, multi_res, numBaixo);
+        numBaixo = desenhaCartasColuna(coluna6_cima, NULL, 6, 1, multi_res, numBaixo);
+
+        numBaixo = desenhaCartasColuna(NULL, coluna7_baixo, 7, 0, multi_res, numBaixo);
+        numBaixo = desenhaCartasColuna(coluna7_cima, NULL, 7, 1, multi_res, numBaixo);
+
+
+        EndDrawing();
+
+        /*for (int i=0; i<52; i++) {
             Image cartaImagem = LoadImage(carta->info.imagemtxt);
             ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
             carta->info.imagem = LoadTextureFromImage(cartaImagem);
@@ -148,7 +173,7 @@ void novoJogo() {
         }
         DrawText("Jogo Paciencia", 190, 200, 20, RED);
 
-        EndDrawing();
+        EndDrawing();*/
     }
 
     CloseWindow();
