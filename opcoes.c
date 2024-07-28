@@ -9,7 +9,7 @@ void iniciaMenu() {
     int opcao;
     printf("INICIAR JOGO [1]\nCARREGAR JOGO [2]\nCREDITOS [3]\nSAIR DO JOGO [4]\n");
     scanf("%i", &opcao);
-
+ 
     if (opcao == 1) {
         novoJogo();
     }
@@ -20,11 +20,39 @@ void iniciaMenu() {
 }
 
 void novoJogo() {
+    int opcao_res = 1, multi_res = 1;
+    printf("Qual sua resolução de preferência?\n");
+    printf("[1]640x400 [2]960x600 [3]1280x800 [4]1600x1000\n");
+    scanf("%d", &opcao_res);
+
+    switch(opcao_res) {
+        case 1:
+            printf("Resolução 640x400\n");
+            multi_res = 1;
+            break;
+        case 2:
+            printf("Resolução 960x600\n");
+            multi_res = 1.5;
+            break;
+        case 3:
+            printf("Resolução 1280x800\n");
+            multi_res = 2;
+            break;
+        case 4:
+            printf("Resolução 1600x1000\n");
+            multi_res = 2.5;
+            break;
+        default:
+            printf("Opção inválida!\n");
+            novoJogo();
+    }
+
+
     ListaCircEnc *baralho = cria_baralho();
     ListaCircEnc *baralho_embaralhado = embaralha_baralho(baralho);
     
-    const int screenWidth = 1000;
-    const int screenHeight =650;
+    const int screenWidth = (640*multi_res);
+    const int screenHeight = (400*multi_res);
     InitWindow(screenWidth, screenHeight, "Jogo Paciencia");
 
     //pilhas superiores (onde os naipes devem ser organizados)
@@ -109,11 +137,13 @@ void novoJogo() {
         carta = baralho_embaralhado->prim;
         for (int i=0; i<52; i++) {
             Image cartaImagem = LoadImage(carta->info.imagemtxt);
-            ImageResize(&cartaImagem, (cartaImagem.width - cartaImagem.width * 0.8), (cartaImagem.height - cartaImagem.height * 0.8));
+            ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
             carta->info.imagem = LoadTextureFromImage(cartaImagem);
             UnloadImage(cartaImagem);
+            int j = i/7;
+            int k = i%7;
 
-            DrawTexture(carta->info.imagem, 20 + i*15, 20 + i*15, WHITE);
+            DrawTexture(carta->info.imagem, (100+ k*65)*multi_res, (10+ j*20)*multi_res, WHITE);
             carta = carta->prox;
         }
         DrawText("Jogo Paciencia", 190, 200, 20, RED);
