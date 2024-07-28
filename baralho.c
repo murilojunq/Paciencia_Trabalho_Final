@@ -272,4 +272,30 @@ ListaCircEnc* embaralha_baralho(ListaCircEnc* baralho)
 }
 
 
+int insereFilaViradoCima(FilaEnc *fila, Info info){
+    NodoFEnc *novo = (NodoFEnc*)malloc(sizeof(NodoFEnc));
+   if (fila != NULL){
+      novo->info = info;
+      novo->prox = NULL;
+      if (fila->fim != NULL)
+         fila->fim->prox = novo;
+      else
+         fila->ini = novo;
+      fila->fim = novo;
+   }
+
+   novo->info.sentido = 1;
+}
+
+int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info) {
+    NodoPEnc *novo = (NodoPEnc*)malloc(sizeof(NodoPEnc));
+   if (novo != NULL){ // Idealmente, sempre checar!
+      novo->info = info;
+      novo->prox = pilha->topo;
+      pilha->topo = novo;
+   }
+
+    novo->info.sentido = 0;
+}
+
 

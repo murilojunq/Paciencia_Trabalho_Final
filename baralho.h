@@ -94,9 +94,8 @@ ListaCircEnc* cria_baralho();
 
 ListaCircEnc* embaralha_baralho(ListaCircEnc* baralho);
 
+int insereFilaViradoCima(FilaEnc *fila, Info info);
 
-
-
-
+int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info);
 
 #endif // BARALHO_H_INCLUDED
