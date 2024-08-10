@@ -6,7 +6,7 @@
 #include <string.h>
 
 //Funcao que inicia o menu de opções do jogo
-void iniciaMenu();
+int iniciaMenu();
 
 void novoJogo();
 

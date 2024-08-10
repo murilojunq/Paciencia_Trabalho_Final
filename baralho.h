@@ -5,19 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <raylib.h>
+#include "cartas.h"
 
 #define NOME_NAIPE 10
-
-typedef struct{
-    int chave;
-    int valor;
-    char naipe[NOME_NAIPE];
-    char imagemtxt[35];
-    Texture2D imagem;
-    int sentido; //de costas (0) ou de frente (1);
-}Carta;
-
-typedef Carta Info;
 
 typedef struct nodoLEnc{
     Info info;

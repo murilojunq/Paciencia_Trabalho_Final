@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <raylib.h>
+#include "cartas.h"
 
 
 
@@ -62,7 +63,6 @@ Info desenfileiraFilaEnc(FilaEnc *fila){
 int vaziaFilaEnc(FilaEnc *fila){
    return (fila->ini == NULL);
 }
-
 // Funcao que cria uma pilha
 PilhaEnc* criaPilhaEnc(){
    PilhaEnc *pilha = (PilhaEnc*)malloc(sizeof(PilhaEnc));
@@ -249,12 +249,12 @@ ListaCircEnc* embaralha_baralho(ListaCircEnc* baralho)
     srand(time(NULL));
 
     //preenchendo o vetor de 1 a 52
-    for(i = 0; i <= QUANTIDADE_DE_CARTAS; i++)
+    for(i = 0; i < QUANTIDADE_DE_CARTAS; i++)
     {
         cartas[i] = i + 1;
     }
     //algoritimo de Fisher-Yates para embaralhar os valores no vetor
-    for(i = TAMANHO_DO_VETOR; i >= 0 ; i--)
+    for(i = QUANTIDADE_DE_CARTAS - 1; i > 0 ; i--)
     {
         j = rand() % (i + 1);
         aux = cartas[i];

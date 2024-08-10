@@ -5,16 +5,16 @@
 #include <string.h>
 #include "raylib.h"
 
-void iniciaMenu() {
+int iniciaMenu() {
     int opcao;
     printf("INICIAR JOGO [1]\nCARREGAR JOGO [2]\nCREDITOS [3]\nSAIR DO JOGO [4]\n");
     scanf("%i", &opcao);
  
     if (opcao == 1) {
-        novoJogo();
+        return 1;
     }
     else if (opcao == 4) {
-        sair();
+        return 4;
     }
     else iniciaMenu();
 }
@@ -159,21 +159,6 @@ void novoJogo() {
 
 
         EndDrawing();
-
-        /*for (int i=0; i<52; i++) {
-            Image cartaImagem = LoadImage(carta->info.imagemtxt);
-            ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
-            carta->info.imagem = LoadTextureFromImage(cartaImagem);
-            UnloadImage(cartaImagem);
-            int j = i/7;
-            int k = i%7;
-
-            DrawTexture(carta->info.imagem, (100+ k*65)*multi_res, (10+ j*20)*multi_res, WHITE);
-            carta = carta->prox;
-        }
-        DrawText("Jogo Paciencia", 190, 200, 20, RED);
-
-        EndDrawing();*/
     }
 
     CloseWindow();
