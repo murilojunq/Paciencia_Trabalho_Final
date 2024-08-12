@@ -62,68 +62,56 @@ void novoJogo() {
     PilhaEnc *pilha_espadas = criaPilhaEnc();
 
     //colunas
-    FilaEnc *coluna1_cima = criaFilaEnc();
-
-    FilaEnc *coluna2_cima = criaFilaEnc();
-    PilhaEnc *coluna2_baixo = criaPilhaEnc();
-
-    FilaEnc *coluna3_cima = criaFilaEnc();
-    PilhaEnc *coluna3_baixo = criaPilhaEnc();
-
-    FilaEnc *coluna4_cima = criaFilaEnc();
-    PilhaEnc *coluna4_baixo = criaPilhaEnc();
-
-    FilaEnc *coluna5_cima = criaFilaEnc();
-    PilhaEnc *coluna5_baixo = criaPilhaEnc();
-
-    FilaEnc *coluna6_cima = criaFilaEnc();
-    PilhaEnc *coluna6_baixo = criaPilhaEnc();
-
-    FilaEnc *coluna7_cima = criaFilaEnc();
-    PilhaEnc *coluna7_baixo = criaPilhaEnc();
+    FilaEnc *colunas_cima[7];
+    PilhaEnc *colunas_baixo[7];
+    for (int i=0; i <= 6; i++) {
+        colunas_cima[i] = criaFilaEnc();
+        colunas_baixo[i] = criaPilhaEnc();
+    }
 
     //monte de compras
     ListaCircEnc *baralho_compras = criaListaCircEnc();
     NodoLEnc *carta = baralho_embaralhado->prim;
     //inserindo cartas em cada coluna
-    for (int i =0; i<28; i++) {
+
+   for (int i =0; i<28; i++) {
         if (i == 0){
-            insereFilaViradoCima(coluna1_cima, carta->info);
+            insereFilaViradoCima(colunas_cima[0], carta->info);
         }
         else if (i == 1) {
-            inserePilhaViradoBaixo(coluna2_baixo, carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[1], carta->info);
         }
         else if (i == 2) {
-            insereFilaViradoCima(coluna2_cima, carta->info);
+            insereFilaViradoCima(colunas_cima[1], carta->info);
         }
         else if (i <= 4) {
-            inserePilhaViradoBaixo(coluna3_baixo, carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[2], carta->info);
         }
         else if (i == 5) {
-            insereFilaViradoCima(coluna3_cima, carta->info);
+            insereFilaViradoCima(colunas_cima[2], carta->info);
         }
         else if (i <= 8) {
-            inserePilhaViradoBaixo(coluna4_baixo, carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[3], carta->info);
         }
         else if (i == 9) {
-            insereFilaViradoCima(coluna4_cima, carta->info);
+            insereFilaViradoCima(colunas_cima[3], carta->info);
         }
         else if (i <= 13) {
-            inserePilhaViradoBaixo(coluna5_baixo, carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[4], carta->info);
         }
         else if (i == 14) {
-            insereFilaViradoCima(coluna5_cima, carta->info);
+            insereFilaViradoCima(colunas_cima[4], carta->info);
         }
         else if (i <= 19) {
-            inserePilhaViradoBaixo(coluna6_baixo, carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[5], carta->info);
         }
         else if (i == 20) {
-            insereFilaViradoCima(coluna6_cima, carta->info);
+            insereFilaViradoCima(colunas_cima[5], carta->info);
         }
         else if (i <= 26) {
-            inserePilhaViradoBaixo(coluna7_baixo, carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[6], carta->info);
         }
-        else insereFilaViradoCima(coluna7_cima, carta->info);
+        else insereFilaViradoCima(colunas_cima[6], carta->info);
 
         carta = carta->prox;
     }
@@ -137,29 +125,14 @@ void novoJogo() {
         //desenhando cartas na tela
 
         int numBaixo = 0; // numero de cartas virada para baixo em cada coluna
-        numBaixo = desenhaCartasColuna(coluna1_cima, NULL, 1, 1, multi_res, numBaixo);
 
-        numBaixo = desenhaCartasColuna(NULL, coluna2_baixo, 2, 0, multi_res, numBaixo);
-        numBaixo = desenhaCartasColuna(coluna2_cima, NULL, 2, 1, multi_res, numBaixo);
-
-        numBaixo = desenhaCartasColuna(NULL, coluna3_baixo, 3, 0, multi_res, numBaixo);
-        numBaixo = desenhaCartasColuna(coluna3_cima, NULL, 3, 1, multi_res, numBaixo);
-
-        numBaixo = desenhaCartasColuna(NULL, coluna4_baixo, 4, 0, multi_res, numBaixo);
-        numBaixo = desenhaCartasColuna(coluna4_cima, NULL, 4, 1, multi_res, numBaixo);
-
-        numBaixo = desenhaCartasColuna(NULL, coluna5_baixo, 5, 0, multi_res, numBaixo);
-        numBaixo = desenhaCartasColuna(coluna5_cima, NULL, 5, 1, multi_res, numBaixo);
-
-        numBaixo = desenhaCartasColuna(NULL, coluna6_baixo, 6, 0, multi_res, numBaixo);
-        numBaixo = desenhaCartasColuna(coluna6_cima, NULL, 6, 1, multi_res, numBaixo);
-
-        numBaixo = desenhaCartasColuna(NULL, coluna7_baixo, 7, 0, multi_res, numBaixo);
-        numBaixo = desenhaCartasColuna(coluna7_cima, NULL, 7, 1, multi_res, numBaixo);
-
-
+        for (int i=0; i<=6;i++) {
+            numBaixo = desenhaCartasColuna(NULL, colunas_baixo[i], i+1, 0, multi_res, numBaixo);
+            desenhaCartasColuna(colunas_cima[i], NULL, i+1, 1, multi_res, numBaixo);
+        }
         EndDrawing();
     }
+    salvarJogo(colunas_cima, colunas_baixo);
 
     CloseWindow();
 
@@ -171,19 +144,10 @@ void novoJogo() {
     destroiPilhaEnc(pilha_ouro);
     destroiPilhaEnc(pilha_espadas);
     destroiPilhaEnc(pilha_paus);
-    destroiPilhaEnc(coluna2_baixo);
-    destroiPilhaEnc(coluna3_baixo);
-    destroiPilhaEnc(coluna4_baixo);
-    destroiPilhaEnc(coluna5_baixo);
-    destroiPilhaEnc(coluna6_baixo);
-    destroiPilhaEnc(coluna7_baixo);
-    destroiFilaEnc(coluna1_cima);
-    destroiFilaEnc(coluna2_cima);
-    destroiFilaEnc(coluna3_cima);
-    destroiFilaEnc(coluna4_cima);
-    destroiFilaEnc(coluna5_cima);
-    destroiFilaEnc(coluna6_cima);
-    destroiFilaEnc(coluna7_cima);
+    for (int i=0;i<=6;i++) {
+        free(colunas_baixo[i]);
+        free(colunas_cima[i]);
+    }
 }
 
 void carregarJogo() {
@@ -196,4 +160,27 @@ void creditos() {
 
 void sair() {
     abort();
+}
+
+void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7]) {
+    FILE *jogoSalvo;
+    jogoSalvo = fopen("./jogoSalvo.txt", "w");
+    NodoFEnc *coluna_cimaAux;
+    NodoPEnc *coluna_baixoAux;
+
+    for (int i =0; i <= 6; i++) {
+        coluna_baixoAux = colunas_baixo[i]->topo;
+        coluna_cimaAux = colunas_cima[i]->ini;
+
+        while (coluna_baixoAux != NULL) {
+            fprintf(jogoSalvo ,"%d %s %s\n", coluna_baixoAux->info.valor, coluna_baixoAux->info.naipe, coluna_baixoAux->info.imagemtxt);
+            coluna_baixoAux = coluna_baixoAux->prox;
+        }
+        fprintf(jogoSalvo, "\n");
+        while (coluna_cimaAux != NULL) {
+            fprintf(jogoSalvo ,"%d %s %s\n", coluna_cimaAux->info.valor, coluna_cimaAux->info.naipe, coluna_cimaAux->info.imagemtxt);
+            coluna_cimaAux = coluna_cimaAux->prox;
+        }
+        fprintf(jogoSalvo, "\n");
+    }
 }

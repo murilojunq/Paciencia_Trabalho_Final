@@ -309,11 +309,10 @@ int desenhaCartasColuna(FilaEnc *fila, PilhaEnc *pilha, int coluna, int sentido,
     O argumento sentido é referente ao sentido da carta (virado para cima ou para baixo);
     O argumento numBaixo, é o número de cartas daquela coluna que estão de cabeça para baixo (é importante apenas quando
 esta funcao for usada para plotar as cartas viradas para cima, caso contrario deve receber 0)
-    */
-    
+    */ 
     NodoLEnc *carta;
     int i = 0;
-    if (sentido == 0) {
+    if (sentido == 0 && pilha->topo != NULL) {
         i = 0;
         carta = pilha->topo;
         while(carta->prox != NULL) {
@@ -332,8 +331,9 @@ esta funcao for usada para plotar as cartas viradas para cima, caso contrario de
         }
         return i;
     }
-    else if (sentido == 1) {
+    else if (sentido == 1 && fila->ini != NULL) {
         carta = fila->ini;
+        i=0;
         while(carta != NULL) {
             Image cartaImagem = LoadImage(carta->info.imagemtxt);
             ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
@@ -347,6 +347,6 @@ esta funcao for usada para plotar as cartas viradas para cima, caso contrario de
         }
         return 0;
     }
-    return -1;
+    return 0;
 }
 

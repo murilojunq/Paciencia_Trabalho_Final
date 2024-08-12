@@ -16,6 +16,8 @@ void creditos();
 
 void sair();
 
+void salvarJogo();
+
 
 
 
