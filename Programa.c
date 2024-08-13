@@ -10,5 +10,8 @@ int main(void)
     if (opcao == 1) {
         novoJogo();
     }
+    else if (opcao == 2) {
+        carregarJogo();
+    }
     return 0;
 }

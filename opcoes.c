@@ -13,6 +13,9 @@ int iniciaMenu() {
     if (opcao == 1) {
         return 1;
     }
+    else if (opcao == 2) {
+        return 2;
+    }
     else if (opcao == 4) {
         return 4;
     }
@@ -152,6 +155,166 @@ void novoJogo() {
 
 void carregarJogo() {
 
+    int opcao_res = 1, multi_res = 1;
+    printf("Qual sua resolução de preferência?\n");
+    printf("[1]640x400 [2]960x600 [3]1280x800 [4]1600x1000\n");
+    scanf("%d", &opcao_res);
+
+    switch(opcao_res) {
+        case 1:
+            printf("Resolução 640x400\n");
+            multi_res = 1;
+            break;
+        case 2:
+            printf("Resolução 960x600\n");
+            multi_res = 1.5;
+            break;
+        case 3:
+            printf("Resolução 1280x800\n");
+            multi_res = 2;
+            break;
+        case 4:
+            printf("Resolução 1600x1000\n");
+            multi_res = 2.5;
+            break;
+        default:
+            printf("Opção inválida!\n");
+            novoJogo();
+    }
+
+    const int screenWidth = (640*multi_res);
+    const int screenHeight = (400*multi_res);
+    InitWindow(screenWidth, screenHeight, "Jogo Paciencia");
+
+    ListaCircEnc *baralho = cria_baralho();
+
+    PilhaEnc *pilha_copas = criaPilhaEnc();
+    PilhaEnc *pilha_ouro = criaPilhaEnc();
+    PilhaEnc *pilha_paus = criaPilhaEnc();
+    PilhaEnc *pilha_espadas = criaPilhaEnc();
+
+    //colunas
+    FilaEnc *colunas_cima[7];
+    PilhaEnc *colunas_baixo[7];
+    for (int i=0; i <= 6; i++) {
+        colunas_cima[i] = criaFilaEnc();
+        colunas_baixo[i] = criaPilhaEnc();
+    }
+
+    ListaCircEnc *baralho_embaralhado = criaListaCircEnc();
+
+    FILE *jogoSalvo;
+    jogoSalvo = fopen("./jogoSalvo.txt", "r");
+
+    int aux;
+    NodoLEnc *cartaAux;
+    for (int i = 0; i<=6; i++) {
+        aux = 1;
+        while (aux!=0){
+            fscanf(jogoSalvo, "%d", &aux);
+            if (aux != 0) {
+                cartaAux = buscaInfoListaCircEnc(baralho, aux);
+                inserePilhaViradoBaixo(colunas_baixo[i], cartaAux->info, NULL);
+            }
+        }
+    }
+
+    for (int i = 0; i<=6; i++) {
+        aux = 1;
+        while (aux!=0){
+            fscanf(jogoSalvo, "%d", &aux);
+            if (aux != 0) {
+                cartaAux = buscaInfoListaCircEnc(baralho, aux);
+                insereFilaViradoCima(colunas_cima[i], cartaAux->info, NULL, NULL, NULL);
+            }
+        }
+    }
+
+    aux = 1;
+    while (aux!=0){
+        fscanf(jogoSalvo, "%d", &aux);
+        if (aux != 0) {
+            cartaAux = buscaInfoListaCircEnc(baralho, aux);
+            empilhaPilhaEnc(pilha_copas, cartaAux->info);
+            cartaAux->info.sentido = 1;
+        }
+    }
+
+    aux = 1;
+    while (aux!=0){
+        fscanf(jogoSalvo, "%d", &aux);
+        if (aux != 0) {
+            cartaAux = buscaInfoListaCircEnc(baralho, aux);
+            empilhaPilhaEnc(pilha_ouro, cartaAux->info);
+            cartaAux->info.sentido = 1;
+        }
+    }
+
+    aux = 1;
+    while (aux!=0){
+        fscanf(jogoSalvo, "%d", &aux);
+        if (aux != 0) {
+            cartaAux = buscaInfoListaCircEnc(baralho, aux);
+            empilhaPilhaEnc(pilha_paus, cartaAux->info);
+            cartaAux->info.sentido = 1;
+        }
+    }
+
+    aux = 1;
+    while (aux!=0){
+        fscanf(jogoSalvo, "%d", &aux);
+        if (aux != 0) {
+            cartaAux = buscaInfoListaCircEnc(baralho, aux);
+            empilhaPilhaEnc(pilha_espadas, cartaAux->info);
+            
+        }
+    }
+
+    aux = 1;
+    while (aux!=0){
+        fscanf(jogoSalvo, "%d", &aux);
+        if (aux != 0) {
+            cartaAux = buscaInfoListaCircEnc(baralho, aux);
+            insereInicioListaCircEnc(baralho_embaralhado, cartaAux->info);
+            cartaAux->info.sentido = 1;
+        }
+    }
+
+
+
+    SetTargetFPS(60);
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+
+        ClearBackground(GREEN);
+
+        //desenhando cartas na tela
+
+        int numBaixo = 0; // numero de cartas virada para baixo em cada coluna
+
+        for (int i=0; i<=6;i++) {
+            numBaixo = desenhaCartasColuna(NULL, colunas_baixo[i], i+1, 0, multi_res, numBaixo);
+            desenhaCartasColuna(colunas_cima[i], NULL, i+1, 1, multi_res, numBaixo);
+        }
+        EndDrawing();
+    }
+
+    CloseWindow();
+
+
+    destroiListaCircEnc(baralho);
+    destroiListaCircEnc(baralho_embaralhado);
+    destroiPilhaEnc(pilha_copas);
+    destroiPilhaEnc(pilha_ouro);
+    destroiPilhaEnc(pilha_espadas);
+    destroiPilhaEnc(pilha_paus);
+    for (int i=0;i<=6;i++) {
+        free(colunas_baixo[i]);
+        free(colunas_cima[i]);
+    }
+
+
+
 }
 
 void creditos() {
@@ -159,7 +322,7 @@ void creditos() {
 }
 
 void sair() {
-    abort();
+    return;
 }
 
 void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *pilha_copas, PilhaEnc *pilha_ouros, PilhaEnc *pilha_paus, PilhaEnc *pilha_espadas, ListaCircEnc *baralho) {
@@ -172,7 +335,6 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
 
     for (int i =0; i <= 6; i++) {
         coluna_baixoAux = colunas_baixo[i]->topo;
-        coluna_cimaAux = colunas_cima[i]->ini;
         
         if (coluna_baixoAux != NULL) {
             while (coluna_baixoAux != NULL) {
@@ -180,7 +342,11 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
                 coluna_baixoAux = coluna_baixoAux->prox;
             }
         }
-        fprintf(jogoSalvo, "\n");
+        fprintf(jogoSalvo, "%d\n", 0);
+
+    }
+    for (int i=0; i<=6;i++) {
+        coluna_cimaAux = colunas_cima[i]->ini;
 
         if (coluna_cimaAux != NULL) {
             while (coluna_cimaAux != NULL) {
@@ -188,7 +354,7 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
                 coluna_cimaAux = coluna_cimaAux->prox;
             }
         }
-        fprintf(jogoSalvo, "\n");
+        fprintf(jogoSalvo, "%d\n", 0);
     }
 
     pilhasAux = pilha_copas->topo;
@@ -198,7 +364,7 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
             pilhasAux = pilhasAux->prox;
         }
     }
-    fprintf(jogoSalvo, "\n");
+    fprintf(jogoSalvo, "%d\n", 0);
 
     pilhasAux = pilha_ouros->topo;
     if (pilhasAux != NULL) {
@@ -207,7 +373,7 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
             pilhasAux = pilhasAux->prox;
         }
     }
-    fprintf(jogoSalvo, "\n");
+    fprintf(jogoSalvo, "%d\n", 0);
 
     pilhasAux = pilha_paus->topo;
     if (pilhasAux != NULL) {
@@ -216,7 +382,7 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
             pilhasAux = pilhasAux->prox;
         }
     }
-    fprintf(jogoSalvo, "\n");
+    fprintf(jogoSalvo, "%d\n", 0);
 
     pilhasAux = pilha_espadas->topo;
     if (pilhasAux != NULL) {
@@ -225,7 +391,7 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
             pilhasAux = pilhasAux->prox;
         }
     }
-    fprintf(jogoSalvo, "\n");
+    fprintf(jogoSalvo, "%d\n", 0);
 
     baralhoAux = baralho->prim->ant;
     int c = baralhoAux->info.chave;
@@ -235,5 +401,5 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
             fprintf(jogoSalvo, "%d\n", baralhoAux->info.chave);
         } while (baralhoAux->info.chave != c);
     }
-    fprintf(jogoSalvo, "\n");
+    fprintf(jogoSalvo, "%d\n", 0);
 }

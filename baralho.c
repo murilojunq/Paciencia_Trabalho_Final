@@ -215,6 +215,7 @@ int removeInfoListaCircEnc(ListaCircEnc *lista, int chave) {
             primeiro->prox->ant = primeiro->ant;
             primeiro->ant->prox = primeiro->prox;
             lista->prim = lista->prim->prox; 
+            free(primeiro);
         }
         else {
             NodoLEnc *aux = lista->prim;
@@ -223,6 +224,7 @@ int removeInfoListaCircEnc(ListaCircEnc *lista, int chave) {
             }
             aux->prox->ant = aux->ant;
             aux->ant->prox = aux->prox;
+            free(aux);
         }
     }
 }
