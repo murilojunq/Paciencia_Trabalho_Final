@@ -77,6 +77,8 @@ int insereInicioListaCircEnc(ListaCircEnc *lista, Info info);
 // Fun��o que insere um nodo no fim de uma lista
 int insereFimListaCircEnc(ListaCircEnc *lista, Info info);
 
+int removeInfoListaCircEnc(ListaCircEnc *lista, int chave);
+
 // Funcao que resgata um nodo com uma informacao de uma lista
 NodoLEnc* buscaInfoListaCircEnc(ListaCircEnc* lista, int chave);
 
@@ -84,9 +86,9 @@ ListaCircEnc* cria_baralho();
 
 ListaCircEnc* embaralha_baralho(ListaCircEnc* baralho);
 
-int insereFilaViradoCima(FilaEnc *fila, Info info);
+int insereFilaViradoCima(FilaEnc *fila, Info info, ListaCircEnc *baralhoOrigem, PilhaEnc *pilhaOrigem, FilaEnc *filaOrigem);
 
-int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info);
+int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info, ListaCircEnc *baralhoOrigem);
 
 int desenhaCartasColuna(FilaEnc *fila, PilhaEnc *pilha, int coluna, int sentido, float multi_res, int numBaixo);
 

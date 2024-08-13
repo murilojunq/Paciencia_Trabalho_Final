@@ -205,6 +205,28 @@ int insereFimListaCircEnc(ListaCircEnc *lista, Info info) {
     return 1;
 }
 
+int removeInfoListaCircEnc(ListaCircEnc *lista, int chave) {
+    if (lista->prim != NULL) {
+        NodoLEnc *aux = lista->prim;
+
+        //caso nodo seja o primeiro da lista
+        if (lista->prim->info.chave == chave) {
+            NodoLEnc *primeiro = lista->prim;
+            primeiro->prox->ant = primeiro->ant;
+            primeiro->ant->prox = primeiro->prox;
+            lista->prim = lista->prim->prox; 
+        }
+        else {
+            NodoLEnc *aux = lista->prim;
+            while(aux->info.chave != chave) {
+                aux = aux->prox;
+            }
+            aux->prox->ant = aux->ant;
+            aux->ant->prox = aux->prox;
+        }
+    }
+}
+
 // Fun��o que resgata um n� com uma informa��o de uma lista
 NodoLEnc* buscaInfoListaCircEnc(ListaCircEnc* lista, int chave)
 {
@@ -263,7 +285,7 @@ ListaCircEnc* embaralha_baralho(ListaCircEnc* baralho)
     }
 
     //passando os valores embaralhados para o novo vetor
-    for (int k=0;k<TAMANHO_DO_VETOR; k++) {
+    for (int k=0;k<QUANTIDADE_DE_CARTAS; k++) {
         nodoAux = buscaInfoListaCircEnc(baralho, cartas[k]);
         insereInicioListaCircEnc(baralho_embaralhado, nodoAux->info);
     }
@@ -272,7 +294,10 @@ ListaCircEnc* embaralha_baralho(ListaCircEnc* baralho)
 }
 
 
-int insereFilaViradoCima(FilaEnc *fila, Info info){
+int insereFilaViradoCima(FilaEnc *fila, Info info, ListaCircEnc *baralhoOrigem, PilhaEnc *pilhaOrigem, FilaEnc *filaOrigem){
+    //Os parâmetros <tipo>Origem representão o lugar de onde a carta a ser adiocionada veio
+    //Obviamente só um poderá ser escolhido, para os outros deve ser passado NULL;
+    
     NodoFEnc *novo = (NodoFEnc*)malloc(sizeof(NodoFEnc));
    if (fila != NULL){
       novo->info = info;
@@ -285,9 +310,13 @@ int insereFilaViradoCima(FilaEnc *fila, Info info){
    }
 
    novo->info.sentido = 1;
+
+   if (baralhoOrigem) removeInfoListaCircEnc(baralhoOrigem, info.chave);
+
+   //ATENCAO: falta implementar para pilhaOrigem != NULL e filaOrigem != NULL
 }
 
-int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info) {
+int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info, ListaCircEnc *baralhoOrigem) {
     NodoPEnc *novo = (NodoPEnc*)malloc(sizeof(NodoPEnc));
    if (novo != NULL){ // Idealmente, sempre checar!
       novo->info = info;
@@ -298,8 +327,10 @@ int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info) {
       novo->prox = pilha->topo;
       pilha->topo = novo;
    }
-
     novo->info.sentido = 0;
+
+   if (baralhoOrigem) removeInfoListaCircEnc(baralhoOrigem, info.chave);
+
 }
 
 int desenhaCartasColuna(FilaEnc *fila, PilhaEnc *pilha, int coluna, int sentido, float multi_res, int numBaixo) {
