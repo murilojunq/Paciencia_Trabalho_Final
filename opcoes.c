@@ -76,42 +76,42 @@ void novoJogo() {
 
    for (int i =0; i<28; i++) {
         if (i == 0){
-            insereFilaViradoCima(colunas_cima[0], carta->info);
+            insereFilaViradoCima(colunas_cima[0], carta->info, baralho_embaralhado, NULL, NULL);
         }
         else if (i == 1) {
-            inserePilhaViradoBaixo(colunas_baixo[1], carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[1], carta->info, baralho_embaralhado);
         }
         else if (i == 2) {
-            insereFilaViradoCima(colunas_cima[1], carta->info);
+            insereFilaViradoCima(colunas_cima[1], carta->info, baralho_embaralhado, NULL, NULL);
         }
         else if (i <= 4) {
-            inserePilhaViradoBaixo(colunas_baixo[2], carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[2], carta->info, baralho_embaralhado);
         }
         else if (i == 5) {
-            insereFilaViradoCima(colunas_cima[2], carta->info);
+            insereFilaViradoCima(colunas_cima[2], carta->info, baralho_embaralhado, NULL, NULL);
         }
         else if (i <= 8) {
-            inserePilhaViradoBaixo(colunas_baixo[3], carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[3], carta->info, baralho_embaralhado);
         }
         else if (i == 9) {
-            insereFilaViradoCima(colunas_cima[3], carta->info);
+            insereFilaViradoCima(colunas_cima[3], carta->info, baralho_embaralhado, NULL, NULL);
         }
         else if (i <= 13) {
-            inserePilhaViradoBaixo(colunas_baixo[4], carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[4], carta->info, baralho_embaralhado);
         }
         else if (i == 14) {
-            insereFilaViradoCima(colunas_cima[4], carta->info);
+            insereFilaViradoCima(colunas_cima[4], carta->info, baralho_embaralhado, NULL, NULL);
         }
         else if (i <= 19) {
-            inserePilhaViradoBaixo(colunas_baixo[5], carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[5], carta->info, baralho_embaralhado);
         }
         else if (i == 20) {
-            insereFilaViradoCima(colunas_cima[5], carta->info);
+            insereFilaViradoCima(colunas_cima[5], carta->info, baralho_embaralhado, NULL, NULL);
         }
         else if (i <= 26) {
-            inserePilhaViradoBaixo(colunas_baixo[6], carta->info);
+            inserePilhaViradoBaixo(colunas_baixo[6], carta->info, baralho_embaralhado);
         }
-        else insereFilaViradoCima(colunas_cima[6], carta->info);
+        else insereFilaViradoCima(colunas_cima[6], carta->info, baralho_embaralhado, NULL, NULL);
 
         carta = carta->prox;
     }
@@ -132,7 +132,7 @@ void novoJogo() {
         }
         EndDrawing();
     }
-    salvarJogo(colunas_cima, colunas_baixo);
+    salvarJogo(colunas_cima, colunas_baixo, pilha_copas, pilha_ouro, pilha_paus, pilha_espadas, baralho_embaralhado);
 
     CloseWindow();
 
@@ -162,25 +162,78 @@ void sair() {
     abort();
 }
 
-void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7]) {
+void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *pilha_copas, PilhaEnc *pilha_ouros, PilhaEnc *pilha_paus, PilhaEnc *pilha_espadas, ListaCircEnc *baralho) {
     FILE *jogoSalvo;
     jogoSalvo = fopen("./jogoSalvo.txt", "w");
     NodoFEnc *coluna_cimaAux;
     NodoPEnc *coluna_baixoAux;
+    NodoLEnc *baralhoAux;
+    NodoPEnc *pilhasAux;
 
     for (int i =0; i <= 6; i++) {
         coluna_baixoAux = colunas_baixo[i]->topo;
         coluna_cimaAux = colunas_cima[i]->ini;
-
-        while (coluna_baixoAux != NULL) {
-            fprintf(jogoSalvo ,"%d %s %s\n", coluna_baixoAux->info.valor, coluna_baixoAux->info.naipe, coluna_baixoAux->info.imagemtxt);
-            coluna_baixoAux = coluna_baixoAux->prox;
+        
+        if (coluna_baixoAux != NULL) {
+            while (coluna_baixoAux != NULL) {
+                fprintf(jogoSalvo ,"%d\n", coluna_baixoAux->info.chave);
+                coluna_baixoAux = coluna_baixoAux->prox;
+            }
         }
         fprintf(jogoSalvo, "\n");
-        while (coluna_cimaAux != NULL) {
-            fprintf(jogoSalvo ,"%d %s %s\n", coluna_cimaAux->info.valor, coluna_cimaAux->info.naipe, coluna_cimaAux->info.imagemtxt);
-            coluna_cimaAux = coluna_cimaAux->prox;
+
+        if (coluna_cimaAux != NULL) {
+            while (coluna_cimaAux != NULL) {
+                fprintf(jogoSalvo ,"%d\n", coluna_cimaAux->info.chave);
+                coluna_cimaAux = coluna_cimaAux->prox;
+            }
         }
         fprintf(jogoSalvo, "\n");
     }
+
+    pilhasAux = pilha_copas->topo;
+    if (pilhasAux != NULL) {
+        while (pilhasAux != NULL) {
+            fprintf(jogoSalvo, "%d\n", pilhasAux->info.chave);
+            pilhasAux = pilhasAux->prox;
+        }
+    }
+    fprintf(jogoSalvo, "\n");
+
+    pilhasAux = pilha_ouros->topo;
+    if (pilhasAux != NULL) {
+        while (pilhasAux != NULL) {
+            fprintf(jogoSalvo, "%d\n", pilhasAux->info.chave);
+            pilhasAux = pilhasAux->prox;
+        }
+    }
+    fprintf(jogoSalvo, "\n");
+
+    pilhasAux = pilha_paus->topo;
+    if (pilhasAux != NULL) {
+        while (pilhasAux != NULL) {
+            fprintf(jogoSalvo, "%d\n", pilhasAux->info.chave);
+            pilhasAux = pilhasAux->prox;
+        }
+    }
+    fprintf(jogoSalvo, "\n");
+
+    pilhasAux = pilha_espadas->topo;
+    if (pilhasAux != NULL) {
+        while (pilhasAux != NULL) {
+            fprintf(jogoSalvo, "%d\n", pilhasAux->info.chave);
+            pilhasAux = pilhasAux->prox;
+        }
+    }
+    fprintf(jogoSalvo, "\n");
+
+    baralhoAux = baralho->prim->ant;
+    int c = baralhoAux->info.chave;
+    if (baralhoAux != NULL) {
+        do{
+            baralhoAux = baralhoAux->prox;
+            fprintf(jogoSalvo, "%d\n", baralhoAux->info.chave);
+        } while (baralhoAux->info.chave != c);
+    }
+    fprintf(jogoSalvo, "\n");
 }
