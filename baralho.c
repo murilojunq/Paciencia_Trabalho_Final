@@ -146,7 +146,7 @@ void imprimeListaCircEnc(ListaCircEnc *lista)
         NodoLEnc *atual = lista->prim;
         do
         {
-            printf("Chave: %d, Valor: %d, Naipe: %s\n", atual->info.chave, atual->info.valor, atual->info.naipe);
+            printf("Chave: %d, Valor: %d, Naipe: %d\n", atual->info.chave, atual->info.valor, atual->info.naipe);
             atual = atual->prox;
         }
         while (atual != lista->prim);
@@ -253,7 +253,7 @@ ListaCircEnc* cria_baralho(){
     ListaCircEnc *baralho;
     baralho = criaListaCircEnc();
     for (int i=0; i<52; i++) {
-        fscanf(txtcartas, " %d %s %d %s", &carta.valor, carta.naipe, &carta.chave, carta.imagemtxt);
+        fscanf(txtcartas, " %d %d %d %s", &carta.valor, &carta.naipe, &carta.chave, carta.imagemtxt);
         insereInicioListaCircEnc(baralho, carta);
     }
 
@@ -345,6 +345,8 @@ esta funcao for usada para plotar as cartas viradas para cima, caso contrario de
     */ 
     NodoLEnc *carta;
     int i = 0;
+    float largura = 50*multi_res;
+    float altura = 70*multi_res;
     if (sentido == 0 && pilha->topo != NULL) {
         i = 0;
         carta = pilha->topo;
@@ -353,12 +355,16 @@ esta funcao for usada para plotar as cartas viradas para cima, caso contrario de
         }
         while(carta != NULL) {
             Image cartaImagem = LoadImage("cartas/card_back_red.png");
-            ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
+            float posX = (100 + (coluna-1)*65)*multi_res;
+            float posY = 10+ i*20*multi_res;
+            ImageResize(&cartaImagem, largura, altura);
             carta->info.imagem = LoadTextureFromImage(cartaImagem);
             UnloadImage(cartaImagem);
 
             DrawTexture(carta->info.imagem,(100 + (coluna-1)*65)*multi_res, (10+ i*20*multi_res), WHITE);
 
+
+            carta->info.hitBox = (Rectangle){posX, posY, largura, altura};
             carta = carta->ant;
             i++;
         }
@@ -368,6 +374,8 @@ esta funcao for usada para plotar as cartas viradas para cima, caso contrario de
         carta = fila->ini;
         i=0;
         while(carta != NULL) {
+            float posX = (100 + (coluna-1)*65)*multi_res;
+            float posY = (10+ (numBaixo+i)*20*multi_res);
             Image cartaImagem = LoadImage(carta->info.imagemtxt);
             ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
             carta->info.imagem = LoadTextureFromImage(cartaImagem);
@@ -375,6 +383,7 @@ esta funcao for usada para plotar as cartas viradas para cima, caso contrario de
 
             DrawTexture(carta->info.imagem,(100 + (coluna-1)*65)*multi_res, (10+ (numBaixo+i)*20*multi_res), WHITE);
 
+            carta->info.hitBox = (Rectangle){posX, posY, largura, altura};
             carta = carta->prox;
             i++;
         }
@@ -383,3 +392,69 @@ esta funcao for usada para plotar as cartas viradas para cima, caso contrario de
     return 0;
 }
 
+int verificaPossibilidadeMudanca(int valor, int naipe, FilaEnc *colunaDestino, FilaEnc *colunas_cima[7]) {
+    //naipes:
+    // 1 -> Copas; 2 -> Ouros; 3 -> Paus; 4 -> Espadas;
+
+    NodoLEnc *cartaBaixo = colunaDestino->fim;
+    FilaEnc *filaAux;
+    NodoLEnc *cartaAux;
+
+    //verifica se uma das colunas_cima contém a carta
+    for (int i=0;i<=6;i++) {
+        filaAux = colunas_cima[i];
+        cartaAux = filaAux->ini;
+        while (cartaAux != NULL) {
+            if (cartaAux->info.valor == valor && cartaAux->info.naipe == naipe) {
+                if (cartaBaixo->info.valor == (valor + 1)) {
+                    if (cartaBaixo->info.naipe <= 2 && naipe > 2) {
+                        return i;
+                    }
+                    else if (cartaBaixo->info.naipe > 2 && naipe <= 2) {
+                        return i;
+                    }
+                }
+
+            }
+        cartaAux = cartaAux->prox;
+        }
+    }
+    return 3;
+}
+
+void mudaCartaColuna(FilaEnc *colunaOrigem, FilaEnc *colunaDestino, int valor, int naipe) {
+    FilaEnc *filaAux = criaFilaEnc();
+    NodoFEnc *cartaAux;
+    Info cartaRemov;
+
+    cartaAux = colunaOrigem->ini;
+    while(cartaAux->info.valor != valor && cartaAux->info.naipe != naipe) {
+        cartaRemov = desenfileiraFilaEnc(colunaOrigem);
+        enfileiraFilaEnc(filaAux,cartaRemov);
+
+        cartaAux = cartaAux->prox;
+    }
+
+    while (cartaAux != NULL) {
+        cartaRemov = desenfileiraFilaEnc(colunaOrigem);
+        enfileiraFilaEnc(colunaDestino, cartaRemov);
+
+        cartaAux = cartaAux->prox;
+    }
+
+    cartaAux = filaAux->ini;
+    while (cartaAux != NULL) {
+        cartaRemov = desenfileiraFilaEnc(filaAux);
+        enfileiraFilaEnc(colunaOrigem, cartaRemov);
+        cartaAux = cartaAux->prox;
+    }
+
+    destroiFilaEnc(filaAux);
+}
+
+void desviraCarta(FilaEnc *coluna_cima, PilhaEnc *coluna_baixo) {
+    Info cartaRemov;
+
+    cartaRemov = desempilhaPilhaEnc(coluna_baixo);
+    enfileiraFilaEnc(coluna_cima, cartaRemov);
+}

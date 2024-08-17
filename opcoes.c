@@ -4,56 +4,250 @@
 #include <stdio.h>
 #include <string.h>
 #include "raylib.h"
+#include <math.h>
 
 int iniciaMenu() {
-    int opcao;
-    printf("INICIAR JOGO [1]\nCARREGAR JOGO [2]\nCREDITOS [3]\nSAIR DO JOGO [4]\n");
-    scanf("%i", &opcao);
- 
-    if (opcao == 1) {
-        return 1;
+
+    int larguraTela = 800;
+    int alturaTela = 600;
+
+    InitWindow(larguraTela, alturaTela, "Menu Principal");
+
+
+    // Dimensões dos retângulos
+    int rectLargura = 200;
+    int rectAltura = 60;
+
+    // Posições dos retângulos
+    int rectX = larguraTela / 2 - rectLargura / 2;
+    int rectY1 = alturaTela / 2 - (2 * rectAltura + 30);  // "Iniciar Jogo"
+    int rectY2 = rectY1 + rectAltura + 20;                // "Carregar Jogo"
+    int rectY3 = rectY2 + rectAltura + 20;                // "Créditos"
+    int rectY4 = rectY3 + rectAltura + 20;                // "Sair"
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose()) {
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        Vector2 posicaoMouse = GetMousePosition();
+
+        DrawText("Paciência", larguraTela / 2 - MeasureText("Paciência", 40) / 2, rectY1 - 80, 40, DARKGRAY);
+
+        // Primeiro retângulo: "Iniciar Jogo"
+        Color rectColor1 = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){rectX, rectY1, rectLargura, rectAltura})) {
+            rectColor1 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return 1;  // Retorna 1 quando "Iniciar Jogo" é clicado
+            }
+        }
+        DrawRectangle(rectX, rectY1, rectLargura, rectAltura, rectColor1);
+        DrawText("Iniciar Jogo", rectX + (rectLargura - MeasureText("Iniciar Jogo", 20)) / 2, rectY1 + (rectAltura - 20) / 2, 20, BLACK);
+
+        // Segundo retângulo: "Carregar Jogo"
+        Color rectColor2 = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){rectX, rectY2, rectLargura, rectAltura})) {
+            rectColor2 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return 2;  // Retorna 2 quando "Carregar Jogo" é clicado
+            }
+        }
+        DrawRectangle(rectX, rectY2, rectLargura, rectAltura, rectColor2);
+        DrawText("Carregar Jogo", rectX + (rectLargura - MeasureText("Carregar Jogo", 20)) / 2, rectY2 + (rectAltura - 20) / 2, 20, BLACK);
+
+        // Terceiro retângulo: "Créditos"
+        Color rectColor3 = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){rectX, rectY3, rectLargura, rectAltura})) {
+            rectColor3 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return 3;  // Retorna 3 quando "Créditos" é clicado
+            }
+        }
+        DrawRectangle(rectX, rectY3, rectLargura, rectAltura, rectColor3);
+        DrawText("Créditos", rectX + (rectLargura - MeasureText("Créditos", 20)) / 2, rectY3 + (rectAltura - 20) / 2, 20, BLACK);
+
+        // Quarto retângulo: "Sair"
+        Color rectColor4 = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){rectX, rectY4, rectLargura, rectAltura})) {
+            rectColor4 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return 4;  // Retorna 4 quando "Sair" é clicado
+            }
+        }
+        DrawRectangle(rectX, rectY4, rectLargura, rectAltura, rectColor4);
+        DrawText("Sair", rectX + (rectLargura - MeasureText("Sair", 20)) / 2, rectY4 + (rectAltura - 20) / 2, 20, BLACK);
+
+        EndDrawing();
     }
-    else if (opcao == 2) {
-        return 2;
-    }
-    else if (opcao == 4) {
-        return 4;
-    }
-    else iniciaMenu();
+
+    CloseWindow(); // Fechar a janela ao terminar
+
+    return 0; // Retorna 0 se a janela for fechada sem clicar em um retângulo
 }
 
-void novoJogo() {
-    int opcao_res = 1, multi_res = 1;
-    printf("Qual sua resolução de preferência?\n");
-    printf("[1]640x400 [2]960x600 [3]1280x800 [4]1600x1000\n");
-    scanf("%d", &opcao_res);
+/// Para saber a dimenção da tela
 
-    switch(opcao_res) {
-        case 1:
-            printf("Resolução 640x400\n");
-            multi_res = 1;
-            break;
-        case 2:
-            printf("Resolução 960x600\n");
-            multi_res = 1.5;
-            break;
-        case 3:
-            printf("Resolução 1280x800\n");
-            multi_res = 2;
-            break;
-        case 4:
-            printf("Resolução 1600x1000\n");
-            multi_res = 2.5;
-            break;
-        default:
-            printf("Opção inválida!\n");
-            novoJogo();
+float mult_res(){
+
+    int larguraTela = 800;
+    int alturaTela = 600;
+
+    InitWindow(larguraTela, alturaTela, "Menu Principal");
+
+
+    // Dimensões dos retângulos
+    int rectLargura = 200;
+    int rectAltura = 60;
+
+    // Posições dos retângulos
+    int rectX = larguraTela / 2 - rectLargura / 2;
+    int rectY1 = alturaTela / 2 - (2 * rectAltura + 30);  // "Iniciar Jogo"
+    int rectY2 = rectY1 + rectAltura + 20;                // "Carregar Jogo"
+    int rectY3 = rectY2 + rectAltura + 20;                // "Créditos"
+    int rectY4 = rectY3 + rectAltura + 20;                // "Sair"
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose()) {
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        Vector2 posicaoMouse = GetMousePosition();
+
+         DrawText("Qual tamanho de tela você deseja?", larguraTela / 2 - MeasureText("Qual tamanho de tela você deseja?", 40) / 2, rectY1 - 80, 40, DARKGRAY);
+
+        // Primeiro retângulo: "Iniciar Jogo"
+        Color rectColor1 = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){rectX, rectY1, rectLargura, rectAltura})) {
+            rectColor1 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return 1;  // Retorna 1 quando "Iniciar Jogo" é clicado
+            }
+        }
+        DrawRectangle(rectX, rectY1, rectLargura, rectAltura, rectColor1);
+        DrawText("640x400", rectX + (rectLargura - MeasureText("640x400", 20)) / 2, rectY1 + (rectAltura - 20) / 2, 20, BLACK);
+
+        // Segundo retângulo: "Carregar Jogo"
+        Color rectColor2 = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){rectX, rectY2, rectLargura, rectAltura})) {
+            rectColor2 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return 1.5;  // Retorna 2 quando "Carregar Jogo" é clicado
+            }
+        }
+        DrawRectangle(rectX, rectY2, rectLargura, rectAltura, rectColor2);
+        DrawText("960x600", rectX + (rectLargura - MeasureText("1280x800", 20)) / 2, rectY2 + (rectAltura - 20) / 2, 20, BLACK);
+
+        // Terceiro retângulo: "Créditos"
+        Color rectColor3 = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){rectX, rectY3, rectLargura, rectAltura})) {
+            rectColor3 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return 2;  // Retorna 3 quando "Créditos" é clicado
+            }
+        }
+        DrawRectangle(rectX, rectY3, rectLargura, rectAltura, rectColor3);
+        DrawText("1280x800", rectX + (rectLargura - MeasureText("1280x800", 20)) / 2, rectY3 + (rectAltura - 20) / 2, 20, BLACK);
+
+        // Quarto retângulo: "Sair"
+        Color rectColor4 = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){rectX, rectY4, rectLargura, rectAltura})) {
+            rectColor4 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return 2.5;  // Retorna 4 quando "Sair" é clicado
+            }
+        }
+        DrawRectangle(rectX, rectY4, rectLargura, rectAltura, rectColor4);
+        DrawText("1600x1000", rectX + (rectLargura - MeasureText("1600x1000", 20)) / 2, rectY4 + (rectAltura - 20) / 2, 20, BLACK);
+
+        EndDrawing();
     }
 
+    CloseWindow(); // Fechar a janela ao terminar
+
+    return 0; // Retorna 0 se a janela for fechada sem clicar em um retângulo
+}
+
+/// Imprime os nomes de quem desenvolveu o jogo
+
+void creditos(){
+    const int screenWidth = 800;
+    const int screenHeight = 600;
+
+    InitWindow(screenWidth, screenHeight, "Nomes com Cores Animadas");
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // Mudança de cor baseada no tempo
+        Color color1 = (Color){ (unsigned char)(sin(GetTime() * 2.0f) * 127 + 128), 0, 0, 255 };
+        Color color2 = (Color){ 0, (unsigned char)(sin(GetTime() * 2.0f + PI / 2) * 127 + 128), 0, 255 };
+        Color color3 = (Color){ 0, 0, (unsigned char)(sin(GetTime() * 2.0f + PI) * 127 + 128), 255 };
+
+        // Nomes a serem desenhados
+        const char *nome1 = "Murilo Junqueira";
+        const char *nome2 = "Gustavo Titow";
+        const char *nome3 = "Gabriel Gonzales";
+
+        // Tamanho da fonte
+        int fontSize = 30;
+
+        // Cálculo das posições X para centralizar os nomes
+        int textX1 = (screenWidth - MeasureText(nome1, fontSize)) / 2;
+        int textX2 = (screenWidth - MeasureText(nome2, fontSize)) / 2;
+        int textX3 = (screenWidth - MeasureText(nome3, fontSize)) / 2;
+
+        // Posições Y dos textos
+        int textY1 = screenHeight / 2 - 100;
+        int textY2 = screenHeight / 2;
+        int textY3 = screenHeight / 2 + 100;
+
+        // Desenha três nomes na tela com cores animadas e centralizados
+        DrawText(nome1, textX1, textY1, fontSize, color1);
+        DrawText(nome2, textX2, textY2, fontSize, color2);
+        DrawText(nome3, textX3, textY3, fontSize, color3);
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+
+}
+
+/// Para sair
+
+void sair(){
+
+
+    CloseWindow();  // Fecha a janela e encerra o programa
+
+}
+
+
+
+
+void novoJogo() {
+
+    float multi_res = mult_res();
 
     ListaCircEnc *baralho = cria_baralho();
     ListaCircEnc *baralho_embaralhado = embaralha_baralho(baralho);
-    
+
     const int screenWidth = (640*multi_res);
     const int screenHeight = (400*multi_res);
     InitWindow(screenWidth, screenHeight, "Jogo Paciencia");
@@ -119,6 +313,41 @@ void novoJogo() {
         carta = carta->prox;
     }
 
+    int botaoLargura = 150*multi_res;
+    int botaoAltura = 25*multi_res;
+    int botaoX = 450*multi_res;
+    int botaoY = 400*multi_res - 40;
+
+    FilaEnc *filaArraste;
+    NodoFEnc *cartaAux;
+    Info cartaAux2;
+    NodoFEnc *cartaSelecionada;
+    int k = 0;
+    int col;
+    FilaEnc *filaAux;
+
+    int selectedValue = 0;
+    int selectedSuit = 0;
+    int selectedColumn = 0;
+
+    const char *values[13] = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+    const char *suits[4] = {"Copas", "Ouros", "Paus", "Espadas"};
+    const char *columns[7] = {"Coluna 1", "Coluna 2", "Coluna 3", "Coluna 4", "Coluna 5", "Coluna 6", "Coluna 7"};
+
+    Rectangle valueBox = {25*multi_res, 400*multi_res - 40, 75*multi_res, 20*multi_res};
+    Rectangle suitBox = {125*multi_res, 400*multi_res - 40, 75*multi_res, 20*multi_res};
+    Rectangle columnBox = {225*multi_res, 400*multi_res - 40, 75*multi_res, 20*multi_res};
+    Rectangle confirmBox = {325*multi_res, 400*multi_res - 40, 60*multi_res, 20*multi_res};
+
+
+    bool valueEdit = false;
+    bool suitEdit = false;
+    bool columnEdit = false;
+
+
+    int numBaixo;
+    int possibilidade = 0; //de mover uma carta
+
     SetTargetFPS(60);
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -127,16 +356,83 @@ void novoJogo() {
 
         //desenhando cartas na tela
 
-        int numBaixo = 0; // numero de cartas virada para baixo em cada coluna
+        numBaixo = 0; // numero de cartas virada para baixo em cada coluna
 
         for (int i=0; i<=6;i++) {
+            if (vaziaFilaEnc(colunas_cima[i]) && !vaziaPilhaEnc(colunas_baixo[i])) {
+                desviraCarta(colunas_cima[i], colunas_baixo[i]);
+            }
             numBaixo = desenhaCartasColuna(NULL, colunas_baixo[i], i+1, 0, multi_res, numBaixo);
             desenhaCartasColuna(colunas_cima[i], NULL, i+1, 1, multi_res, numBaixo);
         }
+
+        Vector2 posicaoMouse = GetMousePosition();
+
+        Color botaoCor = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){botaoX, botaoY, botaoLargura, botaoAltura})) {
+            botaoCor = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return salvarJogo(colunas_cima, colunas_baixo, pilha_copas, pilha_ouro, pilha_paus, pilha_espadas, baralho_embaralhado);  // Retorna 1 quando "Iniciar Jogo" é clicado
+            }
+        }
+        DrawRectangle(botaoX, botaoY, botaoLargura, botaoAltura, botaoCor);
+        DrawText("Salvar Jogo e Sair", botaoX + 10, botaoY + 5, 15*multi_res, BLACK);
+
+        if (CheckCollisionPointRec(GetMousePosition(), valueBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            valueEdit = true;
+            suitEdit = false;
+            columnEdit = false;
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), suitBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            suitEdit = true;
+            valueEdit = false;
+            columnEdit = false;
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), columnBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            columnEdit = true;
+            valueEdit = false;
+            suitEdit = false;
+        }
+
+        if (valueEdit) {
+            if (IsKeyPressed(KEY_RIGHT)) selectedValue = (selectedValue + 1) % 13;
+            if (IsKeyPressed(KEY_LEFT)) selectedValue = (selectedValue - 1 + 13) % 13;
+        }
+
+        if (suitEdit) {
+            if (IsKeyPressed(KEY_RIGHT)) selectedSuit = (selectedSuit + 1) % 4;
+            if (IsKeyPressed(KEY_LEFT)) selectedSuit = (selectedSuit - 1 + 4) % 4;
+        }
+
+        if (columnEdit) {
+            if (IsKeyPressed(KEY_RIGHT)) selectedColumn = (selectedColumn + 1) % 7;
+            if (IsKeyPressed(KEY_LEFT)) selectedColumn = (selectedColumn - 1 + 7) % 7;
+        }
+
+        if (CheckCollisionPointRec(posicaoMouse, confirmBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            possibilidade = verificaPossibilidadeMudanca(selectedValue + 1, selectedSuit +1, colunas_cima[selectedColumn], colunas_cima);
+            if (possibilidade  != 0) {
+                mudaCartaColuna(colunas_cima[possibilidade], colunas_cima[selectedColumn], selectedValue +1, selectedSuit +1);
+            }
+        }
+
+
+
+        DrawRectangleRec(valueBox, valueEdit ? LIGHTGRAY : GRAY);
+        DrawRectangleRec(suitBox, suitEdit ? LIGHTGRAY : GRAY);
+        DrawRectangleRec(columnBox, columnEdit ? LIGHTGRAY : GRAY);
+        DrawRectangleRec(confirmBox, CheckCollisionPointRec(posicaoMouse, confirmBox) ? RED : LIGHTGRAY);
+
+        DrawText(values[selectedValue], valueBox.x + 10, valueBox.y + 5, 15*multi_res, BLACK);
+        DrawText(suits[selectedSuit], suitBox.x + 10, suitBox.y + 5, 15*multi_res, BLACK);
+        DrawText(columns[selectedColumn], columnBox.x + 10, columnBox.y + 5, 15*multi_res, BLACK);
+        DrawText("Confirmar", confirmBox.x +10, confirmBox.y+5, 10*multi_res, BLACK);
+
+        DrawText("Use as setas esquerda/direita para selecionar valor, naipe e coluna", 35*multi_res, (400 - 70)*multi_res, 15*multi_res, BLACK);
+        DrawText("Clique em uma das caixas para editar", 35*multi_res, (400 - 58)*multi_res, 15*multi_res, BLACK);
         EndDrawing();
     }
-    salvarJogo(colunas_cima, colunas_baixo, pilha_copas, pilha_ouro, pilha_paus, pilha_espadas, baralho_embaralhado);
-
     CloseWindow();
 
 
@@ -155,33 +451,7 @@ void novoJogo() {
 
 void carregarJogo() {
 
-    int opcao_res = 1, multi_res = 1;
-    printf("Qual sua resolução de preferência?\n");
-    printf("[1]640x400 [2]960x600 [3]1280x800 [4]1600x1000\n");
-    scanf("%d", &opcao_res);
-
-    switch(opcao_res) {
-        case 1:
-            printf("Resolução 640x400\n");
-            multi_res = 1;
-            break;
-        case 2:
-            printf("Resolução 960x600\n");
-            multi_res = 1.5;
-            break;
-        case 3:
-            printf("Resolução 1280x800\n");
-            multi_res = 2;
-            break;
-        case 4:
-            printf("Resolução 1600x1000\n");
-            multi_res = 2.5;
-            break;
-        default:
-            printf("Opção inválida!\n");
-            novoJogo();
-    }
-
+    float multi_res = mult_res();
     const int screenWidth = (640*multi_res);
     const int screenHeight = (400*multi_res);
     InitWindow(screenWidth, screenHeight, "Jogo Paciencia");
@@ -266,7 +536,7 @@ void carregarJogo() {
         if (aux != 0) {
             cartaAux = buscaInfoListaCircEnc(baralho, aux);
             empilhaPilhaEnc(pilha_espadas, cartaAux->info);
-            
+
         }
     }
 
@@ -280,7 +550,10 @@ void carregarJogo() {
         }
     }
 
-
+    int botaoLargura = 150*multi_res;
+    int botaoAltura = 50*multi_res;
+    int botaoX = 640*multi_res / 2 - botaoLargura / 2;
+    int botaoY = 400*multi_res - (1.5*botaoAltura);
 
     SetTargetFPS(60);
     while (!WindowShouldClose()) {
@@ -296,6 +569,20 @@ void carregarJogo() {
             numBaixo = desenhaCartasColuna(NULL, colunas_baixo[i], i+1, 0, multi_res, numBaixo);
             desenhaCartasColuna(colunas_cima[i], NULL, i+1, 1, multi_res, numBaixo);
         }
+
+        Vector2 posicaoMouse = GetMousePosition();
+
+        Color botaoCor = LIGHTGRAY;
+        if (CheckCollisionPointRec(posicaoMouse, (Rectangle){botaoX, botaoY, botaoLargura, botaoAltura})) {
+            botaoCor = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                return salvarJogo(colunas_cima, colunas_baixo, pilha_copas, pilha_ouro, pilha_paus, pilha_espadas, baralho_embaralhado);  // Retorna 1 quando "Iniciar Jogo" é clicado
+            }
+        }
+        DrawRectangle(botaoX, botaoY, botaoLargura, botaoAltura, botaoCor);
+        DrawText("Salvar Jogo e Sair", botaoX + (botaoLargura - MeasureText("Salvar Jogo e Sair", 20))/ 2, botaoY + (botaoAltura - 20) / 2, 20, BLACK);
+        
         EndDrawing();
     }
 
@@ -317,13 +604,6 @@ void carregarJogo() {
 
 }
 
-void creditos() {
-    printf("TODOS OS DIREITOS RESERVADOS\nGABRIEL\nGUSTAVO\nMURILO");
-}
-
-void sair() {
-    return;
-}
 
 void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *pilha_copas, PilhaEnc *pilha_ouros, PilhaEnc *pilha_paus, PilhaEnc *pilha_espadas, ListaCircEnc *baralho) {
     FILE *jogoSalvo;
@@ -335,7 +615,7 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
 
     for (int i =0; i <= 6; i++) {
         coluna_baixoAux = colunas_baixo[i]->topo;
-        
+
         if (coluna_baixoAux != NULL) {
             while (coluna_baixoAux != NULL) {
                 fprintf(jogoSalvo ,"%d\n", coluna_baixoAux->info.chave);

@@ -10,10 +10,10 @@
 typedef struct{
     int chave;
     int valor;
-    char naipe[NOME_NAIPE];
+    int naipe;
     char imagemtxt[35];
     Texture2D imagem;
-    Vector2 posicaoCarta;
+    Rectangle hitBox;
     int sentido; //de costas (0) ou de frente (1);
 }Carta;
 
