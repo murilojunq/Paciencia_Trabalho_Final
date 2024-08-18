@@ -449,7 +449,7 @@ void desenhaCartasViradoCima(FilaEnc *fila, int coluna, float multi_res, int num
     }
 }
 
-int verificaPossibilidadeMudanca(int valor, int naipe, FilaEnc *colunaDestino, FilaEnc *colunas_cima[7]) {
+int verificaPossibilidadeMudanca(int valor, int naipe, FilaEnc *colunaDestino, FilaEnc *colunas_cima[7], ListaCircEnc *baralho) {
     //naipes:
     // 1 -> Copas; 2 -> Ouros; 3 -> Paus; 4 -> Espadas;
 
@@ -457,56 +457,79 @@ int verificaPossibilidadeMudanca(int valor, int naipe, FilaEnc *colunaDestino, F
     FilaEnc *filaAux;
     NodoLEnc *cartaAux;
 
-    //verifica se uma das colunas_cima contém a carta
-    for (int i=0;i<=6;i++) {
-        filaAux = colunas_cima[i];
-        cartaAux = filaAux->ini;
-        while (cartaAux != NULL) {
-            if (cartaAux->info.valor == valor && cartaAux->info.naipe == naipe) {
-                if (cartaBaixo->info.valor == (valor + 1)) {
+    if (baralho != NULL) {
+        cartaAux = baralho->prim;
+        if (cartaAux->info.valor == 13 && colunaDestino->ini == NULL) return 8;
+        if (cartaAux->info.valor == valor && cartaAux->info.naipe == naipe) {
+            if (cartaBaixo->info.valor == (valor + 1)) {
                     if (cartaBaixo->info.naipe <= 2 && naipe > 2) {
-                        return i;
+                        return 8; //esse numero vai acabar não fazendo diferença
                     }
                     else if (cartaBaixo->info.naipe > 2 && naipe <= 2) {
-                        return i;
+                        return 8;
                     }
-                }
-
             }
-            cartaAux = cartaAux->prox;
         }
     }
+        for (int i=0;i<=6;i++) {
+            filaAux = colunas_cima[i];
+            cartaAux = filaAux->ini;
+            while (cartaAux != NULL) {
+                if (cartaAux->info.valor == valor && cartaAux->info.naipe == naipe) {
+                    if (cartaAux->info.valor == 13 && colunaDestino->ini == NULL) return i;
+                    else if (cartaBaixo->info.valor == (valor + 1)) {
+                        if (cartaBaixo->info.naipe <= 2 && naipe > 2) {
+                            return i;
+                        }
+                        else if (cartaBaixo->info.naipe > 2 && naipe <= 2) {
+                            return i;
+                        }
+                    }
+
+                }
+                cartaAux = cartaAux->prox;
+            }
+        }
+
+    //verifica se uma das colunas_cima contém a carta
     return -1;
 }
 
-void mudaCartaColuna(FilaEnc *colunaOrigem, FilaEnc *colunaDestino, int valor, int naipe) {
+void mudaCartaColuna(FilaEnc *colunaOrigem, FilaEnc *colunaDestino, ListaCircEnc *baralho, int valor, int naipe) {
     FilaEnc *filaAux = criaFilaEnc();
     NodoFEnc *cartaAux;
     Info cartaRemov;
 
-    cartaAux = colunaOrigem->ini;
-    if (cartaAux->info.valor != valor && cartaAux->info.naipe != naipe) {
-        while(cartaAux->info.valor != valor && cartaAux->info.naipe != naipe) {
+    if (baralho != NULL) {
+        cartaAux = baralho->prim;
+        enfileiraFilaEnc(colunaDestino, cartaAux->info);
+        removeInfoListaCircEnc(baralho, cartaAux->info.chave);
+    }
+    else if (colunaOrigem != NULL) {
+        cartaAux = colunaOrigem->ini;
+        if (cartaAux->info.valor != valor && cartaAux->info.naipe != naipe) {
+            while(cartaAux->info.valor != valor && cartaAux->info.naipe != naipe) {
+                cartaRemov = desenfileiraFilaEnc(colunaOrigem);
+                enfileiraFilaEnc(filaAux,cartaRemov);
+
+                cartaAux = colunaOrigem->ini;
+            }
+        }
+
+        cartaAux = colunaOrigem->ini;
+        while (cartaAux != NULL) {
             cartaRemov = desenfileiraFilaEnc(colunaOrigem);
-            enfileiraFilaEnc(filaAux,cartaRemov);
+            enfileiraFilaEnc(colunaDestino, cartaRemov);
 
             cartaAux = colunaOrigem->ini;
         }
-    }
 
-    cartaAux = colunaOrigem->ini;
-    while (cartaAux != NULL) {
-        cartaRemov = desenfileiraFilaEnc(colunaOrigem);
-        enfileiraFilaEnc(colunaDestino, cartaRemov);
-
-        cartaAux = colunaOrigem->ini;
-    }
-
-    cartaAux = filaAux->ini;
-    while (cartaAux != NULL) {
-        cartaRemov = desenfileiraFilaEnc(filaAux);
-        enfileiraFilaEnc(colunaOrigem, cartaRemov);
         cartaAux = filaAux->ini;
+        while (cartaAux != NULL) {
+            cartaRemov = desenfileiraFilaEnc(filaAux);
+            enfileiraFilaEnc(colunaOrigem, cartaRemov);
+            cartaAux = filaAux->ini;
+        }
     }
 
     destroiFilaEnc(filaAux);

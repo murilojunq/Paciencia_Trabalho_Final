@@ -1,6 +1,6 @@
 1 1 1 cartas/ace_of_hearts.png 
 1 2 2 cartas/ace_of_diamonds.png
-1 3 3 cartas/ace_of_spades.png
+1 3 3 cartas/ace_of_clubs.png
 1 4 4 cartas/ace_of_spades.png
 2 1 5 cartas/2_of_hearts.png
 2 2 6 cartas/2_of_diamonds.png

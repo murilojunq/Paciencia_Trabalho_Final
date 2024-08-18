@@ -416,9 +416,10 @@ void novoJogo() {
         }
 
         if (CheckCollisionPointRec(posicaoMouse, confirmBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            possibilidade = verificaPossibilidadeMudanca(selectedValue + 1, selectedSuit +1, colunas_cima[selectedColumn], colunas_cima);
+            possibilidade = verificaPossibilidadeMudanca(selectedValue + 1, selectedSuit +1, colunas_cima[selectedColumn], colunas_cima, baralho_embaralhado);
             if (possibilidade != -1) {
-                mudaCartaColuna(colunas_cima[possibilidade], colunas_cima[selectedColumn], selectedValue +1, selectedSuit +1);
+                if (possibilidade == 8) mudaCartaColuna(NULL, colunas_cima[selectedColumn], baralho_embaralhado,selectedValue +1, selectedSuit +1);
+                else mudaCartaColuna(colunas_cima[possibilidade], colunas_cima[selectedColumn], NULL,selectedValue +1, selectedSuit +1);
             }
         }
 
@@ -554,6 +555,7 @@ void carregarJogo() {
         }
     }
 
+    //para implementar o baralho, talvez salvar em uma pilha e depois passar para o baralho para garantir a ordem
     int botaoLargura = 150*multi_res;
     int botaoAltura = 50*multi_res;
     int botaoX = 640*multi_res / 2 - botaoLargura / 2;
@@ -573,6 +575,7 @@ void carregarJogo() {
             numBaixo = desenhaCartasColuna(NULL, colunas_baixo[i], i+1, 0, multi_res, numBaixo);
             desenhaCartasColuna(colunas_cima[i], NULL, i+1, 1, multi_res, numBaixo);
         }
+        desenhaBaralhoCompras(baralho_embaralhado, 0, multi_res);
 
         Vector2 posicaoMouse = GetMousePosition();
 

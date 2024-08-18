@@ -92,9 +92,9 @@ int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info, ListaCircEnc *baralhoOrig
 
 int desenhaCartasColuna(FilaEnc *fila, PilhaEnc *pilha, int coluna, int sentido, float multi_res, int numBaixo);
 
-int verificaPossibilidadeMudanca(int valor, int naipe, FilaEnc *colunaDestino, FilaEnc *colunas_cima[7]);
+int verificaPossibilidadeMudanca(int valor, int naipe, FilaEnc *colunaDestino, FilaEnc *colunas_cima[7], ListaCircEnc *baralho);
 
-void mudaCartaColuna(FilaEnc *colunaOrigem, FilaEnc *colunaDestino, int valor, int naipe);
+void mudaCartaColuna(FilaEnc *colunaOrigem, FilaEnc *colunaDestino, ListaCircEnc *baralho, int valor, int naipe);
 
 void desviraCarta(FilaEnc *coluna_cima, PilhaEnc *coluna_baixo);
 
