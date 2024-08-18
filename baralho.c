@@ -485,25 +485,28 @@ void mudaCartaColuna(FilaEnc *colunaOrigem, FilaEnc *colunaDestino, int valor, i
     Info cartaRemov;
 
     cartaAux = colunaOrigem->ini;
-    while(cartaAux->info.valor != valor && cartaAux->info.naipe != naipe) {
-        cartaRemov = desenfileiraFilaEnc(colunaOrigem);
-        enfileiraFilaEnc(filaAux,cartaRemov);
+    if (cartaAux->info.valor != valor && cartaAux->info.naipe != naipe) {
+        while(cartaAux->info.valor != valor && cartaAux->info.naipe != naipe) {
+            cartaRemov = desenfileiraFilaEnc(colunaOrigem);
+            enfileiraFilaEnc(filaAux,cartaRemov);
 
-        cartaAux = cartaAux->prox;
+            cartaAux = colunaOrigem->ini;
+        }
     }
 
+    cartaAux = colunaOrigem->ini;
     while (cartaAux != NULL) {
-        cartaAux = cartaAux->prox; // só por para baixo
         cartaRemov = desenfileiraFilaEnc(colunaOrigem);
         enfileiraFilaEnc(colunaDestino, cartaRemov);
 
+        cartaAux = colunaOrigem->ini;
     }
 
     cartaAux = filaAux->ini;
     while (cartaAux != NULL) {
         cartaRemov = desenfileiraFilaEnc(filaAux);
         enfileiraFilaEnc(colunaOrigem, cartaRemov);
-        cartaAux = cartaAux->prox;
+        cartaAux = filaAux->ini;
     }
 
     destroiFilaEnc(filaAux);
@@ -514,4 +517,36 @@ void desviraCarta(FilaEnc *coluna_cima, PilhaEnc *coluna_baixo) {
         Info cartaRemov = desempilhaPilhaEnc(coluna_baixo);
         enfileiraFilaEnc(coluna_cima, cartaRemov);
     }
+}
+
+void desenhaBaralhoCompras(ListaCircEnc *baralho, int clicado, float multi_res) {
+    if (baralho->prim == NULL) return;
+    float largura = 50 * multi_res;
+    float altura = 70 * multi_res;
+    float posX = 20 * multi_res;
+    float posY = 20 * multi_res;
+
+    Image cartaVirada = LoadImage("cartas/card_back_red.png");
+    ImageResize(&cartaVirada, largura, altura);
+    Texture2D imagemVirada = LoadTextureFromImage(cartaVirada);
+    UnloadImage(cartaVirada);
+    DrawTexture(imagemVirada, posX, posY, WHITE);
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        Vector2 mousePos = GetMousePosition();
+        if (CheckCollisionPointRec(mousePos, (Rectangle){posX, posY, largura, altura})) {
+            baralho->prim = baralho->prim->prox; // Move a carta atual para o fim da lista
+        }
+    }
+
+    // Desenha a carta atual logo abaixo do monte, se houver cartas na lista
+    if (baralho->prim != NULL) {
+        Image cartaAtualImagem = LoadImage(baralho->prim->info.imagemtxt); // Assumindo que `imagemtxt` é o caminho da imagem
+        ImageResize(&cartaAtualImagem, largura, altura);
+        Texture2D imagemAtual = LoadTextureFromImage(cartaAtualImagem);
+        UnloadImage(cartaAtualImagem);
+        DrawTexture(imagemAtual, posX, posY + altura + 10, WHITE); // Desenha um pouco abaixo do monte
+    }
+
+
 }

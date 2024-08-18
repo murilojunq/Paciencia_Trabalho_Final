@@ -102,6 +102,8 @@ int desenhaCartasViradoBaixo(PilhaEnc *pilha, int coluna, float multi_res);
 
 void desenhaCartasViradoCima(FilaEnc *fila, int coluna, float multi_res, int numBaixo);
 
+void desenhaBaralhoCompras(ListaCircEnc *baralho, int clicado, float multi_res);
+
 
 
 #endif // BARALHO_H_INCLUDED

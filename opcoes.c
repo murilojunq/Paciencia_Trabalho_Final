@@ -267,7 +267,6 @@ void novoJogo() {
     }
 
     //monte de compras
-    ListaCircEnc *baralho_compras = criaListaCircEnc();
     NodoLEnc *carta = baralho_embaralhado->prim;
     //inserindo cartas em cada coluna
 
@@ -371,6 +370,7 @@ void novoJogo() {
             numBaixo = desenhaCartasViradoBaixo(colunas_baixo[i], i+1, multi_res);
             desenhaCartasViradoCima(colunas_cima[i], i+1, multi_res, numBaixo);
         }
+        desenhaBaralhoCompras(baralho_embaralhado, 0, multi_res);
         Vector2 posicaoMouse = GetMousePosition();
 
         Color botaoCor = LIGHTGRAY;
@@ -443,7 +443,6 @@ void novoJogo() {
 
     destroiListaCircEnc(baralho);
     destroiListaCircEnc(baralho_embaralhado);
-    destroiListaCircEnc(baralho_compras);
     destroiPilhaEnc(pilha_copas);
     destroiPilhaEnc(pilha_ouro);
     destroiPilhaEnc(pilha_espadas);
