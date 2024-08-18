@@ -361,11 +361,16 @@ void novoJogo() {
         for (int i=0; i<=6;i++) {
             if (vaziaFilaEnc(colunas_cima[i]) && !vaziaPilhaEnc(colunas_baixo[i])) {
                 desviraCarta(colunas_cima[i], colunas_baixo[i]);
+
+                //RESOLVER BUG DE MOVER MAIS DE UMA VEZ A MESMA CARTA
+                //AS CARTAS DE BAIXO NÃO VÃO JUNTO
             }
-            numBaixo = desenhaCartasColuna(NULL, colunas_baixo[i], i+1, 0, multi_res, numBaixo);
-            desenhaCartasColuna(colunas_cima[i], NULL, i+1, 1, multi_res, numBaixo);
         }
 
+        for (int i=0; i<=6;i++) {
+            numBaixo = desenhaCartasViradoBaixo(colunas_baixo[i], i+1, multi_res);
+            desenhaCartasViradoCima(colunas_cima[i], i+1, multi_res, numBaixo);
+        }
         Vector2 posicaoMouse = GetMousePosition();
 
         Color botaoCor = LIGHTGRAY;
@@ -412,7 +417,7 @@ void novoJogo() {
 
         if (CheckCollisionPointRec(posicaoMouse, confirmBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             possibilidade = verificaPossibilidadeMudanca(selectedValue + 1, selectedSuit +1, colunas_cima[selectedColumn], colunas_cima);
-            if (possibilidade  != 0) {
+            if (possibilidade != -1) {
                 mudaCartaColuna(colunas_cima[possibilidade], colunas_cima[selectedColumn], selectedValue +1, selectedSuit +1);
             }
         }

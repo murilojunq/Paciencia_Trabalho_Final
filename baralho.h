@@ -95,7 +95,12 @@ int desenhaCartasColuna(FilaEnc *fila, PilhaEnc *pilha, int coluna, int sentido,
 int verificaPossibilidadeMudanca(int valor, int naipe, FilaEnc *colunaDestino, FilaEnc *colunas_cima[7]);
 
 void mudaCartaColuna(FilaEnc *colunaOrigem, FilaEnc *colunaDestino, int valor, int naipe);
+
 void desviraCarta(FilaEnc *coluna_cima, PilhaEnc *coluna_baixo);
+
+int desenhaCartasViradoBaixo(PilhaEnc *pilha, int coluna, float multi_res);
+
+void desenhaCartasViradoCima(FilaEnc *fila, int coluna, float multi_res, int numBaixo);
 
 
 
