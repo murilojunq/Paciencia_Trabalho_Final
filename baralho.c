@@ -259,6 +259,8 @@ ListaCircEnc* cria_baralho(){
         insereInicioListaCircEnc(baralho, carta);
     }
 
+    
+
     return baralho;
 
 }
@@ -337,62 +339,25 @@ int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info, ListaCircEnc *baralhoOrig
 
 }
 
-int desenhaCartasColuna(FilaEnc *fila, PilhaEnc *pilha, int coluna, int sentido, float multi_res, int numBaixo) {
-    /* Essa funcao desenha as cartas das colunas superiores
-    Quando for usada para desenhar as cartas de cabeça para baixo (pilhas), o argumento fila deve receber NULL, e vice-versa;
-    O argumento coluna é referente à qual coluna estas cartas pertencem;
-    O argumento sentido é referente ao sentido da carta (virado para cima ou para baixo);
-    O argumento numBaixo, é o número de cartas daquela coluna que estão de cabeça para baixo (é importante apenas quando
-esta funcao for usada para plotar as cartas viradas para cima, caso contrario deve receber 0)
-    */ 
-    NodoLEnc *carta;
-    int i = 0;
+void carregaImagemCarta(NodoLEnc *carta, float multi_res) {
+    if (carta == NULL) return;
     float largura = 50*multi_res;
     float altura = 70*multi_res;
-    if (sentido == 0 && pilha->topo != NULL) {
-        i = 0;
-        carta = pilha->topo;
-        while(carta->prox != NULL) {
-            carta = carta->prox;
-        }
-        while(carta != NULL) {
-            Image cartaImagem = LoadImage("cartas/card_back_red.png");
-            float posX = (100 + (coluna-1)*65)*multi_res;
-            float posY = 10+ i*20*multi_res;
-            ImageResize(&cartaImagem, largura, altura);
-            Texture2D imagem = LoadTextureFromImage(cartaImagem);
-            UnloadImage(cartaImagem);
 
-            DrawTexture(imagem,(100 + (coluna-1)*65)*multi_res, (10+ i*20*multi_res), WHITE);
+    Image imagem = LoadImage(carta->info.imagemtxt);
+    if (imagem.width == 0 || imagem.height == 0) return;
+    ImageResize(&imagem, largura, altura);
+    carta->info.imagem = LoadTextureFromImage(imagem);
+    UnloadImage(imagem);
 
-
-            carta->info.hitBox = (Rectangle){posX, posY, largura, altura};
-            carta = carta->ant;
-            i++;
-        }
-        return i;
-    }
-    else if (sentido == 1 && fila->ini != NULL) {
-        carta = fila->ini;
-        i=0;
-        while(carta != NULL) {
-            float posX = (100 + (coluna-1)*65)*multi_res;
-            float posY = (10+ (numBaixo+i)*20*multi_res);
-            Image cartaImagem = LoadImage(carta->info.imagemtxt);
-            ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
-            carta->info.imagem = LoadTextureFromImage(cartaImagem);
-            UnloadImage(cartaImagem);
-
-            DrawTexture(carta->info.imagem,(100 + (coluna-1)*65)*multi_res, (10+ (numBaixo+i)*20*multi_res), WHITE);
-
-            carta->info.hitBox = (Rectangle){posX, posY, largura, altura};
-            carta = carta->prox;
-            i++;
-        }
-        return 0;
-    }
-    return 0;
+    Image imagemBaixo = LoadImage("cartas/card_back_red.png");
+    if (imagemBaixo.width == 0 || imagem.height == 0) return;
+    ImageResize(&imagemBaixo, largura, altura);
+    carta->info.imagemBaixo = LoadTextureFromImage(imagemBaixo);
+    UnloadImage(imagemBaixo);
 }
+
+
 
 int desenhaCartasViradoBaixo(PilhaEnc *pilha, int coluna, float multi_res) {
     NodoLEnc *carta;
@@ -406,14 +371,9 @@ int desenhaCartasViradoBaixo(PilhaEnc *pilha, int coluna, float multi_res) {
             carta = carta->prox;
         }
         while(carta != NULL) {
-            Image cartaImagem = LoadImage("cartas/card_back_red.png");
             float posX = (100 + (coluna-1)*65)*multi_res;
             float posY = 10+ i*20*multi_res;
-            ImageResize(&cartaImagem, largura, altura);
-            Texture2D imagem = LoadTextureFromImage(cartaImagem);
-            UnloadImage(cartaImagem);
-
-            DrawTexture(imagem,(100 + (coluna-1)*65)*multi_res, (10+ i*20*multi_res), WHITE);
+            DrawTexture(carta->info.imagemBaixo,(100 + (coluna-1)*65)*multi_res, (10+ i*20*multi_res), WHITE);
 
 
             carta->info.hitBox = (Rectangle){posX, posY, largura, altura};
@@ -435,11 +395,6 @@ void desenhaCartasViradoCima(FilaEnc *fila, int coluna, float multi_res, int num
         while(carta != NULL) {
             float posX = (100 + (coluna-1)*65)*multi_res;
             float posY = (10+ (numBaixo+i)*20*multi_res);
-            Image cartaImagem = LoadImage(carta->info.imagemtxt);
-            ImageResize(&cartaImagem, 50*multi_res, 70*multi_res);
-            carta->info.imagem = LoadTextureFromImage(cartaImagem);
-            UnloadImage(cartaImagem);
-
             DrawTexture(carta->info.imagem,(100 + (coluna-1)*65)*multi_res, (10+ (numBaixo+i)*20*multi_res), WHITE);
 
             carta->info.hitBox = (Rectangle){posX, posY, largura, altura};
@@ -549,11 +504,7 @@ void desenhaBaralhoCompras(ListaCircEnc *baralho, int clicado, float multi_res) 
     float posX = 20 * multi_res;
     float posY = 20 * multi_res;
 
-    Image cartaVirada = LoadImage("cartas/card_back_red.png");
-    ImageResize(&cartaVirada, largura, altura);
-    Texture2D imagemVirada = LoadTextureFromImage(cartaVirada);
-    UnloadImage(cartaVirada);
-    DrawTexture(imagemVirada, posX, posY, WHITE);
+    DrawTexture(baralho->prim->info.imagemBaixo, posX, posY, WHITE); 
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Vector2 mousePos = GetMousePosition();
@@ -564,11 +515,7 @@ void desenhaBaralhoCompras(ListaCircEnc *baralho, int clicado, float multi_res) 
 
     // Desenha a carta atual logo abaixo do monte, se houver cartas na lista
     if (baralho->prim != NULL) {
-        Image cartaAtualImagem = LoadImage(baralho->prim->info.imagemtxt); // Assumindo que `imagemtxt` é o caminho da imagem
-        ImageResize(&cartaAtualImagem, largura, altura);
-        Texture2D imagemAtual = LoadTextureFromImage(cartaAtualImagem);
-        UnloadImage(cartaAtualImagem);
-        DrawTexture(imagemAtual, posX, posY + altura + 10, WHITE); // Desenha um pouco abaixo do monte
+        DrawTexture(baralho->prim->info.imagem, posX, posY + altura + 10, WHITE); // Desenha um pouco abaixo do monte
     }
 
 

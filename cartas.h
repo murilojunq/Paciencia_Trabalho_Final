@@ -13,6 +13,7 @@ typedef struct{
     int naipe;
     char imagemtxt[35];
     Texture2D imagem;
+    Texture2D imagemBaixo;
     Rectangle hitBox;
     int sentido; //de costas (0) ou de frente (1);
 }Carta;

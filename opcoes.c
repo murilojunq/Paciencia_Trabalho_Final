@@ -312,18 +312,33 @@ void novoJogo() {
         carta = carta->prox;
     }
 
+    NodoLEnc *aux;
+    NodoLEnc* ultimo;
+    for (int i=0; i<=6; i++) {
+        aux = colunas_cima[i]->ini;
+        while (aux != NULL) {
+            carregaImagemCarta(aux, multi_res);
+            aux = aux->prox;
+        }
+        aux = colunas_baixo[i]->topo;
+        while (aux != NULL) {
+            carregaImagemCarta(aux, multi_res);
+            aux = aux->prox;
+        }
+    }
+
+    aux = baralho_embaralhado->prim->ant;
+    ultimo = aux;
+    do {
+        aux = aux->prox;
+        carregaImagemCarta(aux, multi_res);
+    } while (aux->info.chave != ultimo->info.chave);
+    
+
     int botaoLargura = 150*multi_res;
     int botaoAltura = 25*multi_res;
     int botaoX = 450*multi_res;
     int botaoY = 400*multi_res - 40;
-
-    FilaEnc *filaArraste;
-    NodoFEnc *cartaAux;
-    Info cartaAux2;
-    NodoFEnc *cartaSelecionada;
-    int k = 0;
-    int col;
-    FilaEnc *filaAux;
 
     int selectedValue = 0;
     int selectedSuit = 0;
@@ -461,7 +476,7 @@ void carregarJogo() {
     const int screenHeight = (400*multi_res);
     InitWindow(screenWidth, screenHeight, "Jogo Paciencia");
 
-    ListaCircEnc *baralho = cria_baralho();
+    ListaCircEnc *baralho = cria_baralho(multi_res);
 
     PilhaEnc *pilha_copas = criaPilhaEnc();
     PilhaEnc *pilha_ouro = criaPilhaEnc();
@@ -555,11 +570,56 @@ void carregarJogo() {
         }
     }
 
+    NodoLEnc* ultimo;
+    for (int i=0; i<=6; i++) {
+        cartaAux = colunas_cima[i]->ini;
+        while (cartaAux != NULL) {
+            carregaImagemCarta(cartaAux, multi_res);
+            cartaAux = cartaAux->prox;
+        }
+        cartaAux = colunas_baixo[i]->topo;
+        while (cartaAux != NULL) {
+            carregaImagemCarta(cartaAux, multi_res);
+            cartaAux = cartaAux->prox;
+        }
+    }
+
+    cartaAux = baralho_embaralhado->prim->ant;
+    ultimo = cartaAux;
+    do {
+        cartaAux = cartaAux->prox;
+        carregaImagemCarta(cartaAux, multi_res);
+    } while (cartaAux->info.chave != ultimo->info.chave);
+
+
+
     //para implementar o baralho, talvez salvar em uma pilha e depois passar para o baralho para garantir a ordem
     int botaoLargura = 150*multi_res;
-    int botaoAltura = 50*multi_res;
-    int botaoX = 640*multi_res / 2 - botaoLargura / 2;
-    int botaoY = 400*multi_res - (1.5*botaoAltura);
+    int botaoAltura = 25*multi_res;
+    int botaoX = 450*multi_res;
+    int botaoY = 400*multi_res - 40;
+
+    int selectedValue = 0;
+    int selectedSuit = 0;
+    int selectedColumn = 0;
+
+    const char *values[13] = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+    const char *suits[4] = {"Copas", "Ouros", "Paus", "Espadas"};
+    const char *columns[7] = {"Coluna 1", "Coluna 2", "Coluna 3", "Coluna 4", "Coluna 5", "Coluna 6", "Coluna 7"};
+
+    Rectangle valueBox = {25*multi_res, 400*multi_res - 40, 75*multi_res, 20*multi_res};
+    Rectangle suitBox = {125*multi_res, 400*multi_res - 40, 75*multi_res, 20*multi_res};
+    Rectangle columnBox = {225*multi_res, 400*multi_res - 40, 75*multi_res, 20*multi_res};
+    Rectangle confirmBox = {325*multi_res, 400*multi_res - 40, 60*multi_res, 20*multi_res};
+
+
+    bool valueEdit = false;
+    bool suitEdit = false;
+    bool columnEdit = false;
+
+
+    int numBaixo;
+    int possibilidade = 0; //de mover uma carta
 
     SetTargetFPS(60);
     while (!WindowShouldClose()) {
@@ -569,14 +629,22 @@ void carregarJogo() {
 
         //desenhando cartas na tela
 
-        int numBaixo = 0; // numero de cartas virada para baixo em cada coluna
+        numBaixo = 0; // numero de cartas virada para baixo em cada coluna
 
         for (int i=0; i<=6;i++) {
-            numBaixo = desenhaCartasColuna(NULL, colunas_baixo[i], i+1, 0, multi_res, numBaixo);
-            desenhaCartasColuna(colunas_cima[i], NULL, i+1, 1, multi_res, numBaixo);
+            if (vaziaFilaEnc(colunas_cima[i]) && !vaziaPilhaEnc(colunas_baixo[i])) {
+                desviraCarta(colunas_cima[i], colunas_baixo[i]);
+
+                //RESOLVER BUG DE MOVER MAIS DE UMA VEZ A MESMA CARTA
+                //AS CARTAS DE BAIXO NÃO VÃO JUNTO
+            }
+        }
+
+        for (int i=0; i<=6;i++) {
+            numBaixo = desenhaCartasViradoBaixo(colunas_baixo[i], i+1, multi_res);
+            desenhaCartasViradoCima(colunas_cima[i], i+1, multi_res, numBaixo);
         }
         desenhaBaralhoCompras(baralho_embaralhado, 0, multi_res);
-
         Vector2 posicaoMouse = GetMousePosition();
 
         Color botaoCor = LIGHTGRAY;
@@ -588,11 +656,63 @@ void carregarJogo() {
             }
         }
         DrawRectangle(botaoX, botaoY, botaoLargura, botaoAltura, botaoCor);
-        DrawText("Salvar Jogo e Sair", botaoX + (botaoLargura - MeasureText("Salvar Jogo e Sair", 20))/ 2, botaoY + (botaoAltura - 20) / 2, 20, BLACK);
-        
+        DrawText("Salvar Jogo e Sair", botaoX + 10, botaoY + 5, 15*multi_res, BLACK);
+
+        if (CheckCollisionPointRec(GetMousePosition(), valueBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            valueEdit = true;
+            suitEdit = false;
+            columnEdit = false;
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), suitBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            suitEdit = true;
+            valueEdit = false;
+            columnEdit = false;
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), columnBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            columnEdit = true;
+            valueEdit = false;
+            suitEdit = false;
+        }
+
+        if (valueEdit) {
+            if (IsKeyPressed(KEY_RIGHT)) selectedValue = (selectedValue + 1) % 13;
+            if (IsKeyPressed(KEY_LEFT)) selectedValue = (selectedValue - 1 + 13) % 13;
+        }
+
+        if (suitEdit) {
+            if (IsKeyPressed(KEY_RIGHT)) selectedSuit = (selectedSuit + 1) % 4;
+            if (IsKeyPressed(KEY_LEFT)) selectedSuit = (selectedSuit - 1 + 4) % 4;
+        }
+
+        if (columnEdit) {
+            if (IsKeyPressed(KEY_RIGHT)) selectedColumn = (selectedColumn + 1) % 7;
+            if (IsKeyPressed(KEY_LEFT)) selectedColumn = (selectedColumn - 1 + 7) % 7;
+        }
+
+        if (CheckCollisionPointRec(posicaoMouse, confirmBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            possibilidade = verificaPossibilidadeMudanca(selectedValue + 1, selectedSuit +1, colunas_cima[selectedColumn], colunas_cima, baralho_embaralhado);
+            if (possibilidade != -1) {
+                if (possibilidade == 8) mudaCartaColuna(NULL, colunas_cima[selectedColumn], baralho_embaralhado,selectedValue +1, selectedSuit +1);
+                else mudaCartaColuna(colunas_cima[possibilidade], colunas_cima[selectedColumn], NULL,selectedValue +1, selectedSuit +1);
+            }
+        }
+
+
+
+        DrawRectangleRec(valueBox, valueEdit ? LIGHTGRAY : GRAY);
+        DrawRectangleRec(suitBox, suitEdit ? LIGHTGRAY : GRAY);
+        DrawRectangleRec(columnBox, columnEdit ? LIGHTGRAY : GRAY);
+        DrawRectangleRec(confirmBox, CheckCollisionPointRec(posicaoMouse, confirmBox) ? RED : LIGHTGRAY);
+
+        DrawText(values[selectedValue], valueBox.x + 10, valueBox.y + 5, 15*multi_res, BLACK);
+        DrawText(suits[selectedSuit], suitBox.x + 10, suitBox.y + 5, 15*multi_res, BLACK);
+        DrawText(columns[selectedColumn], columnBox.x + 10, columnBox.y + 5, 15*multi_res, BLACK);
+        DrawText("Confirmar", confirmBox.x +10, confirmBox.y+5, 10*multi_res, BLACK);
+
+        DrawText("Use as setas esquerda/direita para selecionar valor, naipe e coluna", 35*multi_res, (400 - 70)*multi_res, 15*multi_res, BLACK);
+        DrawText("Clique em uma das caixas para editar", 35*multi_res, (400 - 58)*multi_res, 15*multi_res, BLACK);
         EndDrawing();
     }
-
     CloseWindow();
 
 

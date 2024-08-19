@@ -90,7 +90,7 @@ int insereFilaViradoCima(FilaEnc *fila, Info info, ListaCircEnc *baralhoOrigem, 
 
 int inserePilhaViradoBaixo(PilhaEnc *pilha, Info info, ListaCircEnc *baralhoOrigem);
 
-int desenhaCartasColuna(FilaEnc *fila, PilhaEnc *pilha, int coluna, int sentido, float multi_res, int numBaixo);
+void carregaImagemCarta(NodoLEnc *carta, float multi_res);
 
 int verificaPossibilidadeMudanca(int valor, int naipe, FilaEnc *colunaDestino, FilaEnc *colunas_cima[7], ListaCircEnc *baralho);
 
