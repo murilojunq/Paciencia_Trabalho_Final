@@ -253,10 +253,10 @@ void novoJogo() {
     InitWindow(screenWidth, screenHeight, "Jogo Paciencia");
 
     //pilhas superiores (onde os naipes devem ser organizados)
-    PilhaEnc *pilha_copas = criaPilhaEnc();
-    PilhaEnc *pilha_ouro = criaPilhaEnc();
-    PilhaEnc *pilha_paus = criaPilhaEnc();
-    PilhaEnc *pilha_espadas = criaPilhaEnc();
+    PilhaEnc *pilhas_finais[4];
+    for (int i=0; i<=3; i++) {
+        pilhas_finais[i] = criaPilhaEnc();
+    }
 
     //colunas
     FilaEnc *colunas_cima[7];
@@ -368,6 +368,19 @@ void novoJogo() {
 
         ClearBackground(GREEN);
 
+        //verifica se o jogador venceu o jogo
+        int pilhas_prontas = 0;
+        for (int i=0; i<=3; i++) {
+            if (pilhas_finais[i]->topo != NULL) {
+                if (pilhas_finais[i]->topo->info.valor == 13)
+                    pilhas_prontas++;
+            }
+        }
+        if (pilhas_prontas == 4) {
+            CloseWindow();
+            telaUsuarioVenceu(multi_res);
+        }
+
         //desenhando cartas na tela
 
         numBaixo = 0; // numero de cartas virada para baixo em cada coluna
@@ -375,9 +388,6 @@ void novoJogo() {
         for (int i=0; i<=6;i++) {
             if (vaziaFilaEnc(colunas_cima[i]) && !vaziaPilhaEnc(colunas_baixo[i])) {
                 desviraCarta(colunas_cima[i], colunas_baixo[i]);
-
-                //RESOLVER BUG DE MOVER MAIS DE UMA VEZ A MESMA CARTA
-                //AS CARTAS DE BAIXO NÃO VÃO JUNTO
             }
         }
 
@@ -386,14 +396,45 @@ void novoJogo() {
             desenhaCartasViradoCima(colunas_cima[i], i+1, multi_res, numBaixo);
         }
         desenhaBaralhoCompras(baralho_embaralhado, 0, multi_res);
+        for (int i =0; i<=3; i++) {
+            desenhaPilhasFinais(pilhas_finais[i], i+1, multi_res);
+        }
+
         Vector2 posicaoMouse = GetMousePosition();
+
+        //confere se alguma carta foi clicada para ser adicionada às pilhas finais
+        for (int i=0; i <=6; i++) {
+            if (colunas_cima[i]->ini != NULL) {
+                aux = colunas_cima[i]->fim;
+                if (CheckCollisionPointRec(posicaoMouse, aux->info.hitBox)) {
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                        inserePilhasFinais(aux, pilhas_finais[aux->info.naipe -1], colunas_cima[i]);
+                    }
+                }
+
+            }
+        }
+        if (CheckCollisionPointRec(posicaoMouse, baralho_embaralhado->prim->info.hitBox)) {
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                if (pilhas_finais[baralho_embaralhado->prim->info.naipe -1]->topo == NULL && baralho_embaralhado->prim->info.valor == 1) {
+                    empilhaPilhaEnc(pilhas_finais[baralho_embaralhado->prim->info.naipe -1], baralho_embaralhado->prim->info);
+                    removeInfoListaCircEnc(baralho_embaralhado, baralho_embaralhado->prim->info.chave);
+                } else if (baralho_embaralhado->prim->info.valor == pilhas_finais[baralho_embaralhado->prim->info.naipe -1]->topo->info.valor + 1) {
+                    empilhaPilhaEnc(pilhas_finais[baralho_embaralhado->prim->info.naipe -1], baralho_embaralhado->prim->info);
+                    removeInfoListaCircEnc(baralho_embaralhado, baralho_embaralhado->prim->info.chave);
+                }
+            }
+        }
+
+
+
 
         Color botaoCor = LIGHTGRAY;
         if (CheckCollisionPointRec(posicaoMouse, (Rectangle){botaoX, botaoY, botaoLargura, botaoAltura})) {
             botaoCor = RED;
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 CloseWindow();
-                return salvarJogo(colunas_cima, colunas_baixo, pilha_copas, pilha_ouro, pilha_paus, pilha_espadas, baralho_embaralhado);  // Retorna 1 quando "Iniciar Jogo" é clicado
+                return salvarJogo(colunas_cima, colunas_baixo, pilhas_finais[0],pilhas_finais[1],pilhas_finais[2],pilhas_finais[3], baralho_embaralhado);  // Retorna 1 quando "Iniciar Jogo" é clicado
             }
         }
         DrawRectangle(botaoX, botaoY, botaoLargura, botaoAltura, botaoCor);
@@ -450,6 +491,23 @@ void novoJogo() {
         DrawText(columns[selectedColumn], columnBox.x + 10, columnBox.y + 5, 15*multi_res, BLACK);
         DrawText("Confirmar", confirmBox.x +10, confirmBox.y+5, 10*multi_res, BLACK);
 
+        //pilhas laterais
+        for (int i = 0; i < 4; i++) {
+            int posY = 10 + i * (70*multi_res + 10);
+
+            DrawRectangleLines(560*multi_res, posY, 50*multi_res, 70*multi_res, BLACK);
+
+            const char *naipe;
+            switch (i) {
+                case 0: naipe = "Copas"; break; // Espadas
+                case 1: naipe = "Ouro"; break; // Copas
+                case 2: naipe = "Paus"; break; // Ouros
+                case 3: naipe = "Espadas"; break; // Paus
+            }
+            int larguraTexto = MeasureText(naipe, 20); // Largura do texto
+            DrawText(naipe, 560*multi_res + (50*multi_res / 2 - larguraTexto / 2), posY + (70*multi_res / 2 - 10), 20, BLACK);
+        }
+
         DrawText("Use as setas esquerda/direita para selecionar valor, naipe e coluna", 35*multi_res, (400 - 70)*multi_res, 15*multi_res, BLACK);
         DrawText("Clique em uma das caixas para editar", 35*multi_res, (400 - 58)*multi_res, 15*multi_res, BLACK);
         EndDrawing();
@@ -459,10 +517,9 @@ void novoJogo() {
 
     destroiListaCircEnc(baralho);
     destroiListaCircEnc(baralho_embaralhado);
-    destroiPilhaEnc(pilha_copas);
-    destroiPilhaEnc(pilha_ouro);
-    destroiPilhaEnc(pilha_espadas);
-    destroiPilhaEnc(pilha_paus);
+    for (int i=0;i<=3;i++){
+        destroiPilhaEnc(pilhas_finais[i]);
+    }
     for (int i=0;i<=6;i++) {
         free(colunas_baixo[i]);
         free(colunas_cima[i]);
@@ -809,4 +866,56 @@ void salvarJogo(FilaEnc *colunas_cima[7], PilhaEnc *colunas_baixo[7], PilhaEnc *
         } while (baralhoAux->info.chave != c);
     }
     fprintf(jogoSalvo, "%d\n", 0);
+}
+
+
+void telaUsuarioVenceu(float multi_res){
+    const int screenWidth = (640*multi_res);
+    const int screenHeight = (400*multi_res);
+    InitWindow(screenWidth, screenHeight, "Jogo Paciencia");
+
+    int largura_botao = 100*multi_res;
+    int altura_botao = 30*multi_res;
+    float posX = screenWidth / 2 - largura_botao / 2;
+
+    Rectangle jogarNovo = (Rectangle){posX, screenHeight / 2 - altura_botao -5, largura_botao, altura_botao};
+    Rectangle sairJogo = (Rectangle){posX, screenHeight / 2 + altura_botao + 5, largura_botao, altura_botao};
+    Color botaoCor1;
+    Color botaoCor2;
+    SetTargetFPS(60);
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(GREEN);
+
+        Vector2 posMouse = GetMousePosition();
+        botaoCor1 = LIGHTGRAY;
+        botaoCor2 = LIGHTGRAY;
+
+        if (CheckCollisionPointRec(posMouse, jogarNovo)) {
+            botaoCor1 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+                novoJogo();
+            }
+        }
+        if (CheckCollisionPointRec(posMouse, sairJogo)) {
+            botaoCor2 = RED;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                CloseWindow();
+            }
+        }
+        DrawRectangle(jogarNovo.x, jogarNovo.y, jogarNovo.width, jogarNovo.height, botaoCor1);
+        DrawRectangle(sairJogo.x, sairJogo.y, sairJogo.width, sairJogo.height, botaoCor2);
+
+        DrawText("PARABÉNS VOCÊ VENCEU!!", posX + posX / 4 - MeasureText("PARABÉNS VOCÊ VENCEU!!", 30) / 2, 120*multi_res, 30, RED);
+        DrawText("Novo Jogo", jogarNovo.x  + (jogarNovo.x / 3 - MeasureText("Novo Jogo", 20)), jogarNovo.y + 5, 20, BLACK);
+        DrawText("Sair do Jogo", sairJogo.x + (sairJogo.x/3 - MeasureText("Sair do Jogo", 20)), sairJogo.y + 5, 20, BLACK);
+
+        EndDrawing();
+
+
+
+
+    }
+    CloseWindow();
 }

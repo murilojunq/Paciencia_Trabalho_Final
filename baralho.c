@@ -516,7 +516,71 @@ void desenhaBaralhoCompras(ListaCircEnc *baralho, int clicado, float multi_res) 
     // Desenha a carta atual logo abaixo do monte, se houver cartas na lista
     if (baralho->prim != NULL) {
         DrawTexture(baralho->prim->info.imagem, posX, posY + altura + 10, WHITE); // Desenha um pouco abaixo do monte
+        baralho->prim->info.hitBox = (Rectangle){posX, posY + altura + 10, largura, altura};
     }
+}
 
 
+void inserePilhasFinais(NodoLEnc *carta, PilhaEnc *pilhaFinal, FilaEnc *filaOrigem){
+    Info cartaRemov;
+    FilaEnc *filaAux = criaFilaEnc();
+    NodoLEnc *cartaAux;
+    NodoLEnc *ultimo;
+    if (carta != NULL && filaOrigem->ini !=NULL) {
+        if (pilhaFinal->topo == NULL && filaOrigem->fim->info.chave == carta->info.chave) {
+            if (carta->info.valor == 1) {
+                cartaAux = filaOrigem->ini;
+                ultimo = filaOrigem->fim;
+                while (cartaAux->info.chave != ultimo->info.chave) {
+                    cartaRemov = desenfileiraFilaEnc(filaOrigem);
+                    enfileiraFilaEnc(filaAux, cartaRemov);
+
+                    cartaAux = filaOrigem->ini;
+                }
+                cartaRemov = desenfileiraFilaEnc(filaOrigem);
+                empilhaPilhaEnc(pilhaFinal, cartaRemov);
+
+                cartaAux = filaAux->ini;
+                while(cartaAux != NULL) {
+                    cartaRemov = desenfileiraFilaEnc(filaAux);
+                    enfileiraFilaEnc(filaOrigem, cartaRemov);
+
+                    cartaAux = filaAux->ini;
+                }
+            }
+        }
+        else if (carta->info.valor == pilhaFinal->topo->info.valor + 1 && filaOrigem->fim->info.chave == carta->info.chave) {
+            cartaAux = filaOrigem->ini;
+            ultimo = filaOrigem->fim;
+                while (cartaAux->info.chave != ultimo->info.chave) {
+                    cartaRemov = desenfileiraFilaEnc(filaOrigem);
+                    enfileiraFilaEnc(filaAux, cartaRemov);
+
+                    cartaAux = filaOrigem->ini;
+                }
+                cartaRemov = desenfileiraFilaEnc(filaOrigem);
+                empilhaPilhaEnc(pilhaFinal, cartaRemov);
+
+                cartaAux = filaAux->ini;
+                while(cartaAux != NULL) {
+                    cartaRemov = desenfileiraFilaEnc(filaAux);
+                    enfileiraFilaEnc(filaOrigem, cartaRemov);
+
+                    cartaAux = filaAux->ini;
+                }
+        }
+        destroiFilaEnc(filaAux);
+    }
+    else return;
+}
+
+void desenhaPilhasFinais(PilhaEnc *pilha, int naipe, float multi_res) {
+    float largura = 50 * multi_res;
+    float altura = 70 * multi_res;
+    float posX = 560 * multi_res;
+    float posY = 10 + (naipe-2) * (70*multi_res + 10);
+
+    if (pilha->topo != NULL) {
+        DrawTexture(pilha->topo->info.imagem, posX, posY + altura + 10, WHITE);
+    }
 }

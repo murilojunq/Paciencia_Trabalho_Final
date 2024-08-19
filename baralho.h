@@ -104,6 +104,10 @@ void desenhaCartasViradoCima(FilaEnc *fila, int coluna, float multi_res, int num
 
 void desenhaBaralhoCompras(ListaCircEnc *baralho, int clicado, float multi_res);
 
+void inserePilhasFinais(NodoLEnc *carta, PilhaEnc *pilhaFinal, FilaEnc *filaOrigem);
+
+void desenhaPilhasFinais(PilhaEnc *pilha, int naipe, float multi_res);
+
 
 
 #endif // BARALHO_H_INCLUDED
